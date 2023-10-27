@@ -60,7 +60,8 @@ public class PlayerController : MonoBehaviour
         public AnimationCurve curvaDeVelocidadMovimiento;
         public float velocidadMovimiento;
 
-
+        public AnimationCurve curvaDeVelocidadMovimientoY;
+        public float velocidadMovimientoY;
     }
     [System.Serializable]
     public class ListaAtaques
@@ -152,6 +153,7 @@ public class PlayerController : MonoBehaviour
     }
     void AttackMovement()
     {
+        this.GetComponent<Rigidbody>().AddForce(this.transform.up * currentComboAttacks.attacks[currentComboAttack].curvaDeVelocidadMovimientoY.Evaluate(Time.time - attackStartTime) * currentComboAttacks.attacks[currentComboAttack].velocidadMovimientoY * Time.deltaTime, ForceMode.Force);
 
         this.GetComponent<Rigidbody>().AddForce(moveDirSaved * currentComboAttacks.attacks[currentComboAttack].curvaDeVelocidadMovimiento.Evaluate(Time.time-attackStartTime) * currentComboAttacks.attacks[currentComboAttack].velocidadMovimiento * Time.deltaTime, ForceMode.Force);
     }

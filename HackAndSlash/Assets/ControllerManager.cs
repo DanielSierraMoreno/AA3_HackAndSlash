@@ -111,10 +111,13 @@ public class ControllerManager : MonoBehaviour
         if (controller.xButton.wasPressedThisFrame)
         {
             delayCuadrado = Time.time;
+            cuadradoHold = true;
         }
         if (controller.yButton.wasPressedThisFrame)
         {
             delayTriangulo = Time.time;
+            trianguloHold = true;
+
         }
         if (controller.xButton.wasReleasedThisFrame && (Time.time - delayCuadrado) <= 0.5f)
         {
@@ -125,13 +128,17 @@ public class ControllerManager : MonoBehaviour
             ataqueTriangulo = true;
 
         }
-        if (controller.xButton.wasReleasedThisFrame && (Time.time - delayCuadrado) > 0.5f)
+
+        if (controller.xButton.isPressed && (Time.time - delayCuadrado) > 0.5f && cuadradoHold)
         {
             ataqueCuadradoCargado = true;
+            cuadradoHold = false;
+
         }
-        if (controller.yButton.wasReleasedThisFrame && (Time.time - delayTriangulo) > 0.5f)
+        if (controller.yButton.isPressed && (Time.time - delayTriangulo) > 0.5f && trianguloHold)
         {
             ataqueTrianguloCargado = true;
+            trianguloHold = false;
 
         }
     }
