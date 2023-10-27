@@ -148,7 +148,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 24614454}
-  m_LocalRotation: {x: 0.17314301, y: -0.6796751, z: 0.17000653, w: 0.6922146}
+  m_LocalRotation: {x: 0.12107942, y: -0.6910262, z: 0.11908559, w: 0.702596}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -438,8 +438,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 282840810}
-  m_LocalRotation: {x: 0.15311344, y: -0.68429416, z: 0.1503398, w: 0.69691885}
-  m_LocalPosition: {x: -163.56882, y: 0.22190094, z: -35.795036}
+  m_LocalRotation: {x: 0.10077219, y: -0.6941724, z: 0.099112764, w: 0.7057949}
+  m_LocalPosition: {x: -162.3689, y: -0.07809901, z: -35.808136}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1315,7 +1315,7 @@ MonoBehaviour:
   m_FollowOffset: {x: 0, y: 0.3, z: -1.07}
   m_XDamping: 1
   m_YDamping: 1
-  m_ZDamping: 1
+  m_ZDamping: 0.3
   m_AngularDampingMode: 0
   m_PitchDamping: 0
   m_YawDamping: 0
@@ -1769,7 +1769,7 @@ MonoBehaviour:
   - combo: 0
     attacks:
     - ataque: 0.5
-      delay: 1
+      delay: 0.75
       nextAttack: 0
       effects: {fileID: 0}
       effectDelay: 0
@@ -1834,8 +1834,9 @@ MonoBehaviour:
         m_PostInfinity: 2
         m_RotationOrder: 4
       velocidadMovimientoY: 0
+      delayFinal: 0
     - ataque: 0.5
-      delay: 1
+      delay: 0.75
       nextAttack: 0
       effects: {fileID: 0}
       effectDelay: 0
@@ -1891,6 +1892,7 @@ MonoBehaviour:
         m_PostInfinity: 2
         m_RotationOrder: 4
       velocidadMovimientoY: 0
+      delayFinal: 0
     - ataque: 0.7
       delay: 0
       nextAttack: 1
@@ -1957,14 +1959,15 @@ MonoBehaviour:
         m_PostInfinity: 2
         m_RotationOrder: 4
       velocidadMovimientoY: 0
-  - combo: 3
+      delayFinal: 0.25
+  - combo: 2
     attacks:
     - ataque: 1
       delay: 1.5
       nextAttack: 0
       effects: {fileID: 0}
       effectDelay: 0
-      name: Combo4-1
+      name: Combo3-1
       transition: 0.2
       curvaDeVelocidadMovimiento:
         serializedVersion: 2
@@ -2025,12 +2028,13 @@ MonoBehaviour:
         m_PostInfinity: 2
         m_RotationOrder: 4
       velocidadMovimientoY: 0
+      delayFinal: 0
     - ataque: 1
       delay: 1.5
       nextAttack: 0
       effects: {fileID: 0}
       effectDelay: 0
-      name: Combo4-2
+      name: Combo3-2
       transition: 0.2
       curvaDeVelocidadMovimiento:
         serializedVersion: 2
@@ -2091,12 +2095,13 @@ MonoBehaviour:
         m_PostInfinity: 2
         m_RotationOrder: 4
       velocidadMovimientoY: 0
+      delayFinal: 0
     - ataque: 1.5
       delay: 2
       nextAttack: 1
       effects: {fileID: 0}
       effectDelay: 0
-      name: Combo4-3
+      name: Combo3-3
       transition: 0.2
       curvaDeVelocidadMovimiento:
         serializedVersion: 2
@@ -2175,14 +2180,15 @@ MonoBehaviour:
         m_PostInfinity: 2
         m_RotationOrder: 4
       velocidadMovimientoY: 5000
-  - combo: 3
+      delayFinal: 0.25
+  - combo: 1
     attacks:
-    - ataque: 1.5
+    - ataque: 0.75
       delay: 1
       nextAttack: 1
       effects: {fileID: 0}
       effectDelay: 0
-      name: Combo4-1
+      name: Combo2-1
       transition: 0.2
       curvaDeVelocidadMovimiento:
         serializedVersion: 2
@@ -2190,69 +2196,78 @@ MonoBehaviour:
         - serializedVersion: 3
           time: 0
           value: 1
-          inSlope: 0.023958225
-          outSlope: 0.023958225
-          tangentMode: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 34
           weightedMode: 0
           inWeight: 0
-          outWeight: 0.39378846
+          outWeight: 0
         - serializedVersion: 3
-          time: 0.6354736
-          value: 0.697052
-          inSlope: -1.6331209
-          outSlope: -1.6331209
+          time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
           tangentMode: 34
           weightedMode: 0
-          inWeight: 0.33333334
-          outWeight: 0.33333334
-        - serializedVersion: 3
-          time: 0.8833313
-          value: 0.0056495667
-          inSlope: -2.7895138
-          outSlope: -2.7895138
-          tangentMode: 34
-          weightedMode: 0
-          inWeight: 0.33333334
+          inWeight: 0
           outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-      velocidadMovimiento: 5000
+      velocidadMovimiento: 0
       curvaDeVelocidadMovimientoY:
         serializedVersion: 2
         m_Curve:
         - serializedVersion: 3
           time: 0
-          value: -0.0061261654
-          inSlope: 6.875242
-          outSlope: 6.875242
+          value: -0.003768921
+          inSlope: 0.1823479
+          outSlope: 0.1823479
           tangentMode: 34
           weightedMode: 0
           inWeight: 0
           outWeight: 0.33333334
         - serializedVersion: 3
-          time: 0.028448194
-          value: 0.18946207
-          inSlope: 12.75798
-          outSlope: 12.75798
-          tangentMode: 34
+          time: 0.29487756
+          value: 0.050001383
+          inSlope: 0.7710653
+          outSlope: 0.7710653
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.6598989
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 0.37521288
+          value: 2.969561
+          inSlope: 5.544463
+          outSlope: 5.544463
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.12532276
+        - serializedVersion: 3
+          time: 0.64379835
+          value: 1.6236267
+          inSlope: -6.857182
+          outSlope: -6.857182
+          tangentMode: 0
           weightedMode: 0
           inWeight: 0.33333334
           outWeight: 0.33333334
         - serializedVersion: 3
-          time: 0.22877277
-          value: 3.9236565
-          inSlope: -17.11031
-          outSlope: -17.11031
-          tangentMode: 34
+          time: 1.0132838
+          value: -0.52885914
+          inSlope: -0.23081543
+          outSlope: -0.23081543
+          tangentMode: 0
           weightedMode: 0
           inWeight: 0.33333334
-          outWeight: 0.33333334
+          outWeight: 0.59705
         - serializedVersion: 3
-          time: 0.36660767
-          value: -3.3624802
-          inSlope: -52.861336
-          outSlope: -52.861336
+          time: 1.2063141
+          value: -0.6430664
+          inSlope: -0.5916548
+          outSlope: -0.5916548
           tangentMode: 34
           weightedMode: 0
           inWeight: 0.33333334
@@ -2260,12 +2275,13 @@ MonoBehaviour:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-      velocidadMovimientoY: 5000
+      velocidadMovimientoY: 6000
+      delayFinal: 0
   airCombo:
-    combo: 4
+  - combo: 4
     attacks:
     - ataque: 0.5
-      delay: 2
+      delay: 0.75
       nextAttack: 0
       effects: {fileID: 0}
       effectDelay: 0
@@ -2281,12 +2297,13 @@ MonoBehaviour:
       curvaDeVelocidadMovimientoY:
         serializedVersion: 2
         m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
+        m_PreInfinity: 0
+        m_PostInfinity: 0
+        m_RotationOrder: 0
       velocidadMovimientoY: 0
+      delayFinal: 0
     - ataque: 0.5
-      delay: 2
+      delay: 0.75
       nextAttack: 0
       effects: {fileID: 0}
       effectDelay: 0
@@ -2302,13 +2319,14 @@ MonoBehaviour:
       curvaDeVelocidadMovimientoY:
         serializedVersion: 2
         m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
+        m_PreInfinity: 0
+        m_PostInfinity: 0
+        m_RotationOrder: 0
       velocidadMovimientoY: 0
-    - ataque: 0.5
-      delay: 2
-      nextAttack: 1
+      delayFinal: 0
+    - ataque: 0.7
+      delay: 0.7
+      nextAttack: 0
       effects: {fileID: 0}
       effectDelay: 0
       name: AirCombo1-3
@@ -2323,10 +2341,71 @@ MonoBehaviour:
       curvaDeVelocidadMovimientoY:
         serializedVersion: 2
         m_Curve: []
+        m_PreInfinity: 0
+        m_PostInfinity: 0
+        m_RotationOrder: 0
+      velocidadMovimientoY: 0
+      delayFinal: 0.65
+  - combo: 5
+    attacks:
+    - ataque: 0.6
+      delay: 1.5
+      nextAttack: 0
+      effects: {fileID: 0}
+      effectDelay: 0
+      name: AirCombo2-1
+      transition: 0.2
+      curvaDeVelocidadMovimiento:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 0
+        m_PostInfinity: 0
+        m_RotationOrder: 0
+      velocidadMovimiento: 0
+      curvaDeVelocidadMovimientoY:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0.032669067
+          value: 0.0070343018
+          inSlope: -1.4207761
+          outSlope: -1.4207761
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0.47841206
+        - serializedVersion: 3
+          time: 0.13537419
+          value: -0.33640215
+          inSlope: 0.0076041603
+          outSlope: 0.0076041603
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 0.45988834
+          value: 0.18280223
+          inSlope: 3.6258936
+          outSlope: 3.6258936
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.106576845
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 0.68157196
+          value: 1.8775024
+          inSlope: 7.6446795
+          outSlope: 7.6446795
+          tangentMode: 34
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-      velocidadMovimientoY: 0
+      velocidadMovimientoY: -12000
+      delayFinal: 0.5
   runCombo:
     combo: 5
     attacks:
@@ -2387,6 +2466,7 @@ MonoBehaviour:
         m_PostInfinity: 2
         m_RotationOrder: 4
       velocidadMovimientoY: 0
+      delayFinal: 0
     - ataque: 0.75
       delay: 2
       nextAttack: 1
@@ -2426,10 +2506,11 @@ MonoBehaviour:
         m_PostInfinity: 2
         m_RotationOrder: 4
       velocidadMovimientoY: 0
+      delayFinal: 0.5
   gravity: -10000
   jumpForce: 30
-  distanceFloor: 2
-  delayCombos: 0.25
+  distanceFloor: 0.5
+  delayCombos: 0.5
 --- !u!4 &1111811890
 Transform:
   m_ObjectHideFlags: 0
@@ -4107,7 +4188,10 @@ Animator:
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
-  m_WarningMessage: 
+  m_WarningMessage: "\nBinding warning: Some generic clip(s) animate transforms that
+    are already bound by a Humanoid avatar. These transforms can only be changed
+    by Humanoid clips.\n\tTransform 'root'\n\tTransform 'hand_r'\n\tFrom animation
+    clip 'FallAttack'\n\tFrom animation clip 'LandAttack'"
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
@@ -4142,7 +4226,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1250495649}
-  m_LocalRotation: {x: 0.15311345, y: -0.68429416, z: 0.1503398, w: 0.69691885}
+  m_LocalRotation: {x: 0.10077218, y: -0.6941724, z: 0.09911275, w: 0.7057948}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
