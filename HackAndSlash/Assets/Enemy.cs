@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -15,10 +16,17 @@ public class Enemy : MonoBehaviour
     float delayCaer;
     public bool cayendo;
     bool golpe;
-
+    public float fallDelay;
     public float ImpulsoGolpeAire;
 
+    public AnimationCurve fallSpeed;
+
     bool dañoOn;
+
+    public GameObject[] hitWhiteEffects;
+
+    public GameObject hitEffect2;
+    //public GameObject hitEffect1;
     // Start is called before the first frame update
     void Start()
     {
@@ -67,9 +75,9 @@ public class Enemy : MonoBehaviour
         }
         else if(golpe)
         {
-            this.GetComponent<Rigidbody>().AddForce(transform.up * Time.deltaTime* VelFlotando, ForceMode.Force);
+            this.GetComponent<Rigidbody>().AddForce(( transform.up * Time.deltaTime* VelFlotando) * fallSpeed.Evaluate(Time.deltaTime-delayCaer), ForceMode.Force);
 
-                if((Time.time-delayCaer) > 1.5f)
+                if((Time.time-delayCaer) > fallDelay)
                 {
                     GravityOn = true;
                     anim.CrossFadeInFixedTime("Caer", 0.2f);
@@ -133,6 +141,21 @@ public class Enemy : MonoBehaviour
             {
                 rigidbody.AddForce(this.transform.up * ImpulsoGolpeAire * Time.deltaTime, ForceMode.Impulse);
                 anim.CrossFadeInFixedTime("Flotando", 0.2f);
+
+
+                Vector3 collisionPosition = (GameObject.FindGameObjectWithTag("PlayerCenter").transform.position - (this.transform.position + new Vector3(0f,2f,0f))).normalized;
+                int spawnIndex = Random.Range(0, hitWhiteEffects.Length);
+                GameObject hitToLook;
+                hitToLook = Instantiate(hitWhiteEffects[spawnIndex], (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
+                
+
+
+                hitToLook = Instantiate(hitEffect2, (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
+
+
+
 
                 fallStartTime = Time.time;
                 GravityOn = false;
