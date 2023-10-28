@@ -1,0 +1,146 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Enemy : MonoBehaviour
+{
+    Rigidbody rigidbody;
+    public float JumpForce;
+    public float gravity;
+    float fallStartTime;
+    public bool GravityOn;
+    public float delayAire;
+    Animator anim;
+    public float VelFlotando;
+    float delayCaer;
+    public bool cayendo;
+    bool golpe;
+
+    public float ImpulsoGolpeAire;
+
+    bool dañoOn;
+    // Start is called before the first frame update
+    void Start()
+    {
+        dañoOn = true;
+        golpe = false;
+        cayendo = false;
+        anim = this.GetComponent<Animator>();
+        rigidbody = this.GetComponent<Rigidbody>();
+        GravityOn = false;
+        anim.CrossFadeInFixedTime("Idle", 0.2f);
+        fallStartTime = Time.time;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if(GravityOn)
+        {
+            RaycastHit hit;
+
+            if (Physics.Raycast(transform.position, transform.TransformDirection(-this.transform.up), out hit, 200, 1 << 7))
+            {
+
+                if (hit.distance > 0.25f)
+                {
+                    ApplyGravity();
+
+                }
+                if (hit.distance < 0.45f)
+                {
+                    GravityOn = false;
+
+                }
+                if (cayendo && hit.distance < 1)
+                {
+                    cayendo = false;
+                    anim.CrossFadeInFixedTime("GolpeSuelo", 0.2f);
+
+                    dañoOn = false;
+
+                    Invoke("Levantarse", 0.5f);
+                }
+            }
+
+
+        }
+        else if(golpe)
+        {
+            this.GetComponent<Rigidbody>().AddForce(transform.up * Time.deltaTime* VelFlotando, ForceMode.Force);
+
+                if((Time.time-delayCaer) > 1.5f)
+                {
+                    GravityOn = true;
+                    anim.CrossFadeInFixedTime("Caer", 0.2f);
+                    cayendo = true;
+                    golpe = false;
+                }
+
+
+        }
+    }
+
+    void Levantarse()
+    {
+        anim.CrossFadeInFixedTime("Levantarse", 0.2f);
+
+        Invoke("Levantado", 0.4f);
+
+    }
+    void Levantado()
+    {
+        anim.CrossFadeInFixedTime("Idle", 0.2f);
+        dañoOn = true;
+
+        this.GetComponent<CapsuleCollider>().enabled = true;
+
+    }
+    void ApplyGravity()
+    {
+        Vector3 gravity = new Vector3(0, this.gravity * (Time.time - fallStartTime), 0);
+        this.GetComponent<Rigidbody>().AddForce(gravity * Time.deltaTime, ForceMode.Force);
+
+    }
+    void DelayAire()
+    {
+        anim.CrossFadeInFixedTime("Flotando", 0.2f);
+        GravityOn = false;
+        delayCaer = Time.time;
+        golpe = true;
+
+    }
+    void delayFuerza()
+    {
+        rigidbody.AddForce(this.transform.up * JumpForce * Time.fixedDeltaTime, ForceMode.Impulse);
+
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(dañoOn)
+        {
+            if(other.CompareTag("GolpeVertical"))
+            {
+                anim.CrossFadeInFixedTime("GolpeSalto", 0.2f);
+                fallStartTime = Time.time;
+                GravityOn = true;
+                Invoke("delayFuerza", 0.1f);
+
+                Invoke("DelayAire", delayAire);
+            }
+            else if (other.CompareTag("GolpeAire") && (golpe||GravityOn))
+            {
+                rigidbody.AddForce(this.transform.up * ImpulsoGolpeAire * Time.deltaTime, ForceMode.Impulse);
+                anim.CrossFadeInFixedTime("Flotando", 0.2f);
+
+                fallStartTime = Time.time;
+                GravityOn = false;
+                golpe = true;
+                delayCaer = Time.time;
+
+            }
+        }
+     
+    }
+}
