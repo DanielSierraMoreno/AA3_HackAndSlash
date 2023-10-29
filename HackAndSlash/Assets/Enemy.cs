@@ -149,23 +149,22 @@ public class Enemy : MonoBehaviour
                 delayCaer = Time.time;
                 Debug.Log(delayCaer);
 
-                GameObject.FindObjectOfType<ControllerManager>().StartVibration(0.2f,0.2f,0.2f);
+                //GameObject.FindObjectOfType<ControllerManager>().StartVibration(0.2f,0.2f,0.2f);
                 rigidbody.AddForce(this.transform.up * ImpulsoGolpeAire * Time.deltaTime, ForceMode.Impulse);
                 anim.CrossFadeInFixedTime("AirDamage", 0.2f);
 
-                //enemyHitFeedback.Play();
                 enemyHitFeedback?.PlayFeedbacks();
 
-                //Vector3 collisionPosition = (GameObject.FindGameObjectWithTag("PlayerCenter").transform.position - (this.transform.position + new Vector3(0f,2f,0f))).normalized;
-                //int spawnIndex = Random.Range(0, hitWhiteEffects.Length);
-                //GameObject hitToLook;
-                //hitToLook = Instantiate(hitWhiteEffects[spawnIndex], (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
-                //hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
-                
+                Vector3 collisionPosition = (GameObject.FindGameObjectWithTag("PlayerCenter").transform.position - (this.transform.position + new Vector3(0f, 2f, 0f))).normalized;
+                int spawnIndex = Random.Range(0, hitWhiteEffects.Length);
+                GameObject hitToLook;
+                hitToLook = Instantiate(hitWhiteEffects[spawnIndex], (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
 
 
-                //hitToLook = Instantiate(hitEffect2, (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
-                //hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
+
+                hitToLook = Instantiate(hitEffect2, (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
 
 
 

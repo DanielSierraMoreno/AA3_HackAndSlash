@@ -9,6 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Barrel
   m_Shader: {fileID: 4800000, guid: 68c74324cec334e40a80fe45963b7a4c, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _AD_CUTOUT_STANDARD_SOURCE_CUSTOM_MAP
   - _AD_EDGE_BASE_SOURCE_CUTOUT_STANDARD
@@ -27,6 +29,7 @@ Material:
   stringTagMap:
     RenderType: Opaque
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -209,7 +212,8 @@ Material:
     - _AdvancedDissolveEdgeAdditionalColorMapOffset: {r: 0, g: 0, b: 0, a: 0}
     - _AdvancedDissolveEdgeAdditionalColorMapScroll: {r: 0, g: 0, b: 0, a: 0}
     - _AdvancedDissolveEdgeAdditionalColorMapTiling: {r: 1, g: 1, b: 1, a: 0}
-    - _AdvancedDissolveEdgeBaseColor: {r: 0.15400212, g: 0.9433962, b: 0.0800997, a: 1}
+    - _AdvancedDissolveEdgeBaseColor: {r: 0.15400212, g: 0.9433962, b: 0.0800997,
+        a: 1}
     - _AdvancedDissolveEdgeBaseColorIntensity: {r: 2, g: 6.389056, b: 0, a: 0}
     - _AdvancedDissolveEdgeUVDistortionMapOffset: {r: 0, g: 0, b: 0, a: 0}
     - _AdvancedDissolveEdgeUVDistortionMapScroll: {r: 0, g: 0, b: 0, a: 0}
