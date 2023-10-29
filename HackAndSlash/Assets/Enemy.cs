@@ -26,8 +26,6 @@ public class Enemy : MonoBehaviour
     public GameObject[] hitWhiteEffects;
 
     public GameObject hitEffect2;
-
-    public MMFeedbacks enemyHitFeedback;
     //public GameObject hitEffect1;
     // Start is called before the first frame update
     void Start()
@@ -126,7 +124,17 @@ public class Enemy : MonoBehaviour
         rigidbody.AddForce(this.transform.up * JumpForce * Time.fixedDeltaTime, ForceMode.Impulse);
 
     }
+    void StandUp()
+    {
+        anim.CrossFadeInFixedTime("StandUp", 0.2f);
+        Invoke("ReturnIdle", 0.6f);
 
+    }
+    void ReturnIdle()
+    {
+        anim.CrossFadeInFixedTime("Idle", 0.2f);
+
+    }
     private void OnTriggerEnter(Collider other)
     {
         if(dañoOn)
@@ -137,7 +145,8 @@ public class Enemy : MonoBehaviour
 
                 anim.CrossFadeInFixedTime("GolpeSalto", 0.2f);
                 fallStartTime = Time.time;
-                GravityOn = true; 
+                GravityOn = true;
+                other.GetComponent<AttackCollider>().enemyHitFeedback?.PlayFeedbacks();
 
 
                 Invoke("delayFuerza", 0.1f);
@@ -147,13 +156,12 @@ public class Enemy : MonoBehaviour
             else if (other.CompareTag("GolpeAire") && (golpe||GravityOn))
             {
                 delayCaer = Time.time;
-                Debug.Log(delayCaer);
 
                 //GameObject.FindObjectOfType<ControllerManager>().StartVibration(0.2f,0.2f,0.2f);
                 rigidbody.AddForce(this.transform.up * ImpulsoGolpeAire * Time.deltaTime, ForceMode.Impulse);
                 anim.CrossFadeInFixedTime("AirDamage", 0.2f);
 
-                enemyHitFeedback?.PlayFeedbacks();
+                other.GetComponent<AttackCollider>().enemyHitFeedback?.PlayFeedbacks();
 
                 Vector3 collisionPosition = (GameObject.FindGameObjectWithTag("PlayerCenter").transform.position - (this.transform.position + new Vector3(0f, 2f, 0f))).normalized;
                 int spawnIndex = Random.Range(0, hitWhiteEffects.Length);
@@ -175,10 +183,34 @@ public class Enemy : MonoBehaviour
                 golpe = true;
 
             }
-            else if (other.CompareTag("GolpeLigero"))
+            else
             {
-                anim.CrossFadeInFixedTime("Hit", 0.2f);
+                if (other.GetComponent<AttackCollider>().enemyStandUp)
+                {
+                    Invoke("StandUp",1f);
+                }
+                else
+                {
+                    Invoke("ReturnIdle", 0.4f);
+
+                }
+
+
+                anim.CrossFadeInFixedTime(other.GetComponent<AttackCollider>().enemyHitAnim, 0.2f);
+
+                rigidbody.AddForce(this.transform.up * other.GetComponent<AttackCollider>().KnockbackY * Time.deltaTime, ForceMode.Impulse);
+
+                other.GetComponent<AttackCollider>().enemyHitFeedback?.PlayFeedbacks();
+
+
+                Vector3 player = new Vector3(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position.x, 0, GameObject.FindGameObjectWithTag("PlayerCenter").transform.position.z);
+                Vector3 enemy = new Vector3(this.transform.position.x, 0, this.transform.position.z);
+
+                Vector3 ForceDirection = (player - (enemy)).normalized;
+                rigidbody.AddForce(-ForceDirection * other.GetComponent<AttackCollider>().Knockback * Time.fixedDeltaTime, ForceMode.Impulse);
+
                 Vector3 collisionPosition = (GameObject.FindGameObjectWithTag("PlayerCenter").transform.position - (this.transform.position + new Vector3(0f, 2f, 0f))).normalized;
+
                 int spawnIndex = Random.Range(0, hitWhiteEffects.Length);
                 GameObject hitToLook;
                 hitToLook = Instantiate(hitWhiteEffects[spawnIndex], (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
@@ -189,6 +221,7 @@ public class Enemy : MonoBehaviour
                 hitToLook = Instantiate(hitEffect2, (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
                 hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
             }
+
         }
      
     }

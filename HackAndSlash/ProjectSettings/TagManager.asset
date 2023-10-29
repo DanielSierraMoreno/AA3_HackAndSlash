@@ -8,6 +8,7 @@ TagManager:
   - GolpeAire
   - PlayerCenter
   - GolpeLigero
+  - GolpeFuerte
   layers:
   - Default
   - TransparentFX

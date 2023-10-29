@@ -52,7 +52,8 @@ public class PlayerController : MonoBehaviour
         public bool nextAttack;
         public MMFeedbacks effects;
 
-        public float effectDelay;
+        public MMFeedbacks enemyFeedback;
+
         public string name;
 
         public float transition;
@@ -66,7 +67,13 @@ public class PlayerController : MonoBehaviour
         public float delayFinal;
 
         public GameObject collider;
+        public string colliderTag;
         public float delayGolpe;
+
+        public Vector2 EnemyKnockBackForce;
+        public string enemyHitAnim;
+
+        public bool EnemyStandUp;
     }
     [System.Serializable]
     public class ListaAtaques
@@ -177,6 +184,7 @@ public class PlayerController : MonoBehaviour
                         dealyAttackFall = Time.time;
                         states = States.IDLE;
                         currentComboAttack = -1;
+                        moveDirSaved = new Vector3();
                         return true;
                     }
 
@@ -247,7 +255,16 @@ public class PlayerController : MonoBehaviour
     {
 
         yield return new WaitForSeconds(time);
-        currentComboAttacks.attacks[golpe].effects.PlayFeedbacks();
+        if (currentComboAttacks.attacks[golpe].effects != null)
+            currentComboAttacks.attacks[golpe].effects.PlayFeedbacks();
+
+        currentComboAttacks.attacks[golpe].collider.GetComponent<AttackCollider>().enemyHitAnim = currentComboAttacks.attacks[golpe].enemyHitAnim;
+        currentComboAttacks.attacks[golpe].collider.GetComponent<AttackCollider>().KnockbackY = currentComboAttacks.attacks[golpe].EnemyKnockBackForce.y;
+        currentComboAttacks.attacks[golpe].collider.GetComponent<AttackCollider>().enemyStandUp = currentComboAttacks.attacks[golpe].EnemyStandUp;
+
+        currentComboAttacks.attacks[golpe].collider.GetComponent<AttackCollider>().Knockback = currentComboAttacks.attacks[golpe].EnemyKnockBackForce.x;
+        currentComboAttacks.attacks[golpe].collider.GetComponent<AttackCollider>().SetFeedback(currentComboAttacks.attacks[golpe].enemyFeedback);
+        currentComboAttacks.attacks[golpe].collider.tag = currentComboAttacks.attacks[golpe].colliderTag;
         currentComboAttacks.attacks[golpe].collider.SetActive(true);
         StartCoroutine(DesactivarCollisionGolpe(0.05f, golpe));
 
@@ -274,7 +291,12 @@ public class PlayerController : MonoBehaviour
     {
         this.GetComponent<Rigidbody>().AddForce(this.transform.up * currentComboAttacks.attacks[currentComboAttack].curvaDeVelocidadMovimientoY.Evaluate(Time.time - attackStartTime) * currentComboAttacks.attacks[currentComboAttack].velocidadMovimientoY * Time.deltaTime, ForceMode.Force);
 
-        this.GetComponent<Rigidbody>().AddForce(moveDirSaved * currentComboAttacks.attacks[currentComboAttack].curvaDeVelocidadMovimiento.Evaluate(Time.time - attackStartTime) * currentComboAttacks.attacks[currentComboAttack].velocidadMovimiento * Time.deltaTime, ForceMode.Force);
+        player.transform.GetChild(3).transform.localPosition += new Vector3(0, 0, 1).normalized;
+        Vector3 dir = this.transform.position - player.transform.GetChild(3).transform.position;
+        //player.transform.LookAt(movementController.transform.position);
+        this.GetComponent<Rigidbody>().AddForce(-dir.normalized * currentComboAttacks.attacks[currentComboAttack].curvaDeVelocidadMovimiento.Evaluate(Time.time - attackStartTime) * currentComboAttacks.attacks[currentComboAttack].velocidadMovimiento * Time.deltaTime, ForceMode.Force);
+        player.transform.GetChild(3).transform.localPosition = new Vector3();
+
     }
 
     bool CheckIfIsFalling()
