@@ -133,7 +133,7 @@ public class Enemy : MonoBehaviour
         {
             if(other.CompareTag("GolpeVertical"))
             {
-                GameObject.FindObjectOfType<ControllerManager>().StartVibration(0.5f, 0.5f, 0.2f);
+                //GameObject.FindObjectOfType<ControllerManager>().StartVibration(0.5f, 0.5f, 0.2f);
 
                 anim.CrossFadeInFixedTime("GolpeSalto", 0.2f);
                 fallStartTime = Time.time;
@@ -174,6 +174,20 @@ public class Enemy : MonoBehaviour
 
                 golpe = true;
 
+            }
+            else if (other.CompareTag("GolpeLigero"))
+            {
+                anim.CrossFadeInFixedTime("Hit", 0.2f);
+                Vector3 collisionPosition = (GameObject.FindGameObjectWithTag("PlayerCenter").transform.position - (this.transform.position + new Vector3(0f, 2f, 0f))).normalized;
+                int spawnIndex = Random.Range(0, hitWhiteEffects.Length);
+                GameObject hitToLook;
+                hitToLook = Instantiate(hitWhiteEffects[spawnIndex], (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
+
+
+
+                hitToLook = Instantiate(hitEffect2, (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
             }
         }
      

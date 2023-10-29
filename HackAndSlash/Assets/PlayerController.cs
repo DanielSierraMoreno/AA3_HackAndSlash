@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Security.Permissions;
 using UnityEngine;
 using UnityEngine.UI;
-
+using MoreMountains.Feedbacks;
 public class PlayerController : MonoBehaviour
 {
     enum States { MOVE, DASH, JUMP, ATTACK, IDLE, DELAYMOVE };
@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour
         public float ataque;
         public float delay;
         public bool nextAttack;
-        public GameObject effects;
+        public MMFeedbacks effects;
 
         public float effectDelay;
         public string name;
@@ -247,6 +247,7 @@ public class PlayerController : MonoBehaviour
     {
 
         yield return new WaitForSeconds(time);
+        currentComboAttacks.attacks[golpe].effects.PlayFeedbacks();
         currentComboAttacks.attacks[golpe].collider.SetActive(true);
         StartCoroutine(DesactivarCollisionGolpe(0.05f, golpe));
 
@@ -489,7 +490,8 @@ public class PlayerController : MonoBehaviour
                                 break;
                             CheckIfReturnIdle();
 
-                            CheckIfStartMove();
+                            //CheckIfStartMove();
+                            CheckMove();
 
                         }
                         break;
@@ -533,12 +535,14 @@ public class PlayerController : MonoBehaviour
                             break;
                         break;
                     case Jump.LAND:
-                        if ((Time.time - timeLanding) > 0.20f)
+                        if ((Time.time - timeLanding) > 0.10f)
                         {
                             player.transform.GetChild(1).Rotate(new Vector3(0,1,0),-90);
                             playerAnim.CrossFadeInFixedTime("Idle", 0.2f);
 
-                            states = States.IDLE;
+                            //states = States.IDLE;
+                            CheckIfReturnIdle();
+                            CheckMove();
                         }
                         break;
                 }
