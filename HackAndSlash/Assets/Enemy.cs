@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
+using MoreMountains.Feedbacks;
 public class Enemy : MonoBehaviour
 {
     Rigidbody rigidbody;
@@ -26,6 +26,8 @@ public class Enemy : MonoBehaviour
     public GameObject[] hitWhiteEffects;
 
     public GameObject hitEffect2;
+
+    public MMFeedbacks enemyHitFeedback;
     //public GameObject hitEffect1;
     // Start is called before the first frame update
     void Start()
@@ -142,6 +144,8 @@ public class Enemy : MonoBehaviour
                 rigidbody.AddForce(this.transform.up * ImpulsoGolpeAire * Time.deltaTime, ForceMode.Impulse);
                 anim.CrossFadeInFixedTime("Flotando", 0.2f);
 
+                //enemyHitFeedback.Play();
+                enemyHitFeedback?.PlayFeedbacks();
 
                 Vector3 collisionPosition = (GameObject.FindGameObjectWithTag("PlayerCenter").transform.position - (this.transform.position + new Vector3(0f,2f,0f))).normalized;
                 int spawnIndex = Random.Range(0, hitWhiteEffects.Length);
