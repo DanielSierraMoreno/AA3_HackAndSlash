@@ -152,4 +152,25 @@ public class ControllerManager : MonoBehaviour
         }
         ControlesAtaques();
     }
+
+    public bool GetDash()
+    {
+        return controller.bButton.wasPressedThisFrame;
+    }
+    public void StartVibration(float leftMotor, float rightMotor, float duration)
+    {
+        // Configurar la vibración
+        controller.SetMotorSpeeds(leftMotor, rightMotor);
+
+        // Iniciar una rutina para detener la vibración después de la duración especificada
+        StartCoroutine(StopVibrationAfterDelay(duration));
+    }
+
+    private System.Collections.IEnumerator StopVibrationAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        // Detener la vibración
+        controller.SetMotorSpeeds(0f, 0f);
+    }
 }

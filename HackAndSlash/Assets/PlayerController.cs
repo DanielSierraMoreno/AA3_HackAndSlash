@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
 
     enum Moves { WALK, RUN, IDLE };
 
-    enum Dash { DASH, DOUBLEDASH, AIRDASH };
+    enum Dash { START,DASH, DOUBLEDASH, AIRDASH,END };
 
     enum Jump { JUMP, FALL, LAND };
 
@@ -102,11 +102,15 @@ public class PlayerController : MonoBehaviour
 
     float dealyAttackFall;
     ControllerManager controller;
-
+    float delayDash;
+    public float dashSpeed;
+    Vector2 dashDirection;
 
     // Start is called before the first frame update
     void Start()
     {
+        player.transform.GetChild(0).GetComponent<TrailsFX.TrailEffect>().enabled = false;
+
         attackFinished = false;
         controller = GameObject.FindAnyObjectByType<ControllerManager>().GetComponent<ControllerManager>();
         currentComboAttack = -1;
@@ -163,6 +167,8 @@ public class PlayerController : MonoBehaviour
                 {
                     if (hit.distance < 0.55)
                     {
+                        playerAnim.speed = 1;
+
                         playerAnim.CrossFadeInFixedTime("LandAttack", 0.1f);
                         doubleJump = false;
                         comboFinishedTime = Time.time;
@@ -181,6 +187,8 @@ public class PlayerController : MonoBehaviour
 
         if ((Time.time - attackStartTime) >= currentComboAttacks.attacks[currentComboAttack].ataque)
         {
+                playerAnim.speed = 1;
+
             if (currentComboAttack + 1 == currentComboAttacks.attacks.Length)
             {
                 comboFinishedTime = Time.time;
@@ -189,7 +197,7 @@ public class PlayerController : MonoBehaviour
 
                 currentComboAttack = -1;
             }
-            if (currentComboAttacks.combo != ComboAtaques.air1 && currentComboAttacks.combo != ComboAtaques.air2)
+            if (currentComboAttacks.combo != ComboAtaques.air1 && currentComboAttacks.combo != ComboAtaques.air2 && currentComboAttacks.combo != ComboAtaques.combo2)
             {
                 CheckIfReturnIdle();
                 CheckIfStartMove();
@@ -252,6 +260,7 @@ public class PlayerController : MonoBehaviour
     }
     void PlayAttack()
     {
+        playerAnim.speed = 1.5f;
         currentComboAttack++;
         if (currentComboAttacks.attacks[currentComboAttack].collider != null)
             StartCoroutine(DelayGolpe(currentComboAttacks.attacks[currentComboAttack].delayGolpe, currentComboAttack));
@@ -379,6 +388,8 @@ public class PlayerController : MonoBehaviour
                     playerAnim.CrossFadeInFixedTime("Idle", 0.2f);
 
                 }
+                if (CheckIfDash())
+                    break;
                 if (CheckAtaques())
                     break;
                 if (CheckIfIsFalling())
@@ -423,13 +434,73 @@ public class PlayerController : MonoBehaviour
             case States.DASH:
                 if (CheckAtaques())
                     break;
+                switch(dash)
+                {
+                    case Dash.START:
+                        if((Time.time-delayDash) >0.30f)
+                        {
+                            if(dashDirection == new Vector2(0,-1))
+                            {
+                                player.transform.GetChild(3).transform.localPosition += new Vector3(dashDirection.x, 0, dashDirection.y).normalized;
+                                Vector3 dir = this.transform.position - player.transform.GetChild(3).transform.position;
+                                this.GetComponent<Rigidbody>().AddForce(dir * dashSpeed*Time.fixedDeltaTime, ForceMode.Impulse);
 
+                                player.transform.GetChild(3).transform.localPosition = new Vector3();
+                            }
+                            else
+                            {
+                               movementController.transform.localPosition -= new Vector3(dashDirection.x, 0, dashDirection.y).normalized;
+                                Vector3 dir = this.transform.position - movementController.transform.position;
+                                this.GetComponent<Rigidbody>().AddForce(dir * dashSpeed * Time.fixedDeltaTime, ForceMode.Impulse);
+
+                                movementController.transform.localPosition = new Vector3();
+                            }
+
+
+                            player.transform.GetChild(0).GetComponent<TrailsFX.TrailEffect>().enabled = true;
+                            delayDash = Time.time;
+                            dash = Dash.DASH;
+
+                        }
+                        break;
+                    case Dash.DASH:
+                        if ((Time.time - delayDash) > 0.2f)
+                        {
+                            delayDash = Time.time;
+
+                            dash = Dash.END;
+
+                            playerAnim.CrossFadeInFixedTime("DashAparecer", 0.2f);
+                            player.transform.GetChild(0).GetComponent<TrailsFX.TrailEffect>().enabled = false;
+
+                        }
+                        break;
+                    case Dash.DOUBLEDASH:
+
+                        break;
+                    case Dash.AIRDASH:
+
+                        break;
+                    case Dash.END:
+                        if ((Time.time - delayDash) > 0.15f)
+                        {
+
+                            if (CheckIfIsFalling())
+                                break;
+                            CheckIfReturnIdle();
+
+                            CheckIfStartMove();
+
+                        }
+                        break;
+                }
 
                 break;
             case States.JUMP:
                 ApplyGravity();
                 this.GetComponent<Rigidbody>().drag = 5;
-
+                if (CheckIfDash())
+                    break;
                 switch (moves)
                 {
                     case Moves.WALK:
@@ -464,6 +535,7 @@ public class PlayerController : MonoBehaviour
                     case Jump.LAND:
                         if ((Time.time - timeLanding) > 0.20f)
                         {
+                            player.transform.GetChild(1).Rotate(new Vector3(0,1,0),-90);
                             playerAnim.CrossFadeInFixedTime("Idle", 0.2f);
 
                             states = States.IDLE;
@@ -473,7 +545,8 @@ public class PlayerController : MonoBehaviour
                 break;
             case States.MOVE:
                 this.GetComponent<Rigidbody>().drag = 15;
-
+                if (CheckIfDash())
+                    break;
                 if (CheckIfIsFalling())
                     break;
                 if (CheckAtaques())
@@ -499,6 +572,8 @@ public class PlayerController : MonoBehaviour
 
                 break;
             case States.DELAYMOVE:
+                if (CheckIfDash())
+                    break;
                 if (CheckAtaques())
                     break;
                 CheckIfReturnIdle();
@@ -541,6 +616,8 @@ public class PlayerController : MonoBehaviour
             {
                 cuadrado = false;
                 moveDirSaved = new Vector3();
+                states = States.ATTACK;
+
                 attacks = Attacks.AIR;
                 currentComboAttacks = GetAttacks(ComboAtaques.air1);
                 PlayAttack();
@@ -710,6 +787,41 @@ public class PlayerController : MonoBehaviour
             playerAnim.CrossFadeInFixedTime("StartMoving", 0.1f);
             states = States.DELAYMOVE;
         }
+    }
+
+    bool CheckIfDash()
+    {
+        if (controller.GetDash())
+        {
+            if(controller.LeftStickValue().magnitude < 0.2f)
+            {
+                player.transform.GetChild(3).transform.localPosition += new Vector3(0, 0, 1).normalized;
+                dashDirection = new Vector2(0, -1);
+                player.transform.LookAt(player.transform.GetChild(3).transform.position);
+                //player.transform.LookAt(movementController.transform.position);
+                player.transform.GetChild(3).transform.localPosition = new Vector3();
+            }
+            else
+            {
+                movementController.transform.localPosition += new Vector3(controller.LeftStickValue().x, 0, controller.LeftStickValue().y).normalized;
+                player.transform.LookAt(movementController.transform.position);
+                dashDirection = new Vector2(controller.LeftStickValue().x, controller.LeftStickValue().y);
+          
+                movementController.transform.localPosition = new Vector3();
+            }
+            player.transform.GetChild(1).Rotate(new Vector3(0, 1, 0), 90);
+
+
+            // Smoothly rotate towards the target point.
+
+
+            delayDash = Time.time;
+            playerAnim.CrossFadeInFixedTime("Dash", 0.1f);
+            states = States.DASH;
+            dash = Dash.START;
+            return true;
+        }
+        return false;
     }
     void CheckMove()
     {

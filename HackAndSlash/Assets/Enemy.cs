@@ -57,7 +57,7 @@ public class Enemy : MonoBehaviour
                     ApplyGravity();
 
                 }
-                if (hit.distance < 0.45f)
+                if (hit.distance < 0.65f)
                 {
                     GravityOn = false;
 
@@ -81,6 +81,7 @@ public class Enemy : MonoBehaviour
 
                 if((Time.time-delayCaer) > fallDelay)
                 {
+                Debug.Log(delayCaer);
                     GravityOn = true;
                     anim.CrossFadeInFixedTime("Caer", 0.2f);
                     cayendo = true;
@@ -132,39 +133,47 @@ public class Enemy : MonoBehaviour
         {
             if(other.CompareTag("GolpeVertical"))
             {
+                GameObject.FindObjectOfType<ControllerManager>().StartVibration(0.5f, 0.5f, 0.2f);
+
                 anim.CrossFadeInFixedTime("GolpeSalto", 0.2f);
                 fallStartTime = Time.time;
-                GravityOn = true;
+                GravityOn = true; 
+
+
                 Invoke("delayFuerza", 0.1f);
 
                 Invoke("DelayAire", delayAire);
             }
             else if (other.CompareTag("GolpeAire") && (golpe||GravityOn))
             {
+                delayCaer = Time.time;
+                Debug.Log(delayCaer);
+
+                GameObject.FindObjectOfType<ControllerManager>().StartVibration(0.2f,0.2f,0.2f);
                 rigidbody.AddForce(this.transform.up * ImpulsoGolpeAire * Time.deltaTime, ForceMode.Impulse);
-                anim.CrossFadeInFixedTime("Flotando", 0.2f);
+                anim.CrossFadeInFixedTime("AirDamage", 0.2f);
 
                 //enemyHitFeedback.Play();
                 enemyHitFeedback?.PlayFeedbacks();
 
-                Vector3 collisionPosition = (GameObject.FindGameObjectWithTag("PlayerCenter").transform.position - (this.transform.position + new Vector3(0f,2f,0f))).normalized;
-                int spawnIndex = Random.Range(0, hitWhiteEffects.Length);
-                GameObject hitToLook;
-                hitToLook = Instantiate(hitWhiteEffects[spawnIndex], (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
-                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
+                //Vector3 collisionPosition = (GameObject.FindGameObjectWithTag("PlayerCenter").transform.position - (this.transform.position + new Vector3(0f,2f,0f))).normalized;
+                //int spawnIndex = Random.Range(0, hitWhiteEffects.Length);
+                //GameObject hitToLook;
+                //hitToLook = Instantiate(hitWhiteEffects[spawnIndex], (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                //hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
                 
 
 
-                hitToLook = Instantiate(hitEffect2, (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
-                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
+                //hitToLook = Instantiate(hitEffect2, (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                //hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
 
 
 
 
                 fallStartTime = Time.time;
                 GravityOn = false;
+
                 golpe = true;
-                delayCaer = Time.time;
 
             }
         }
