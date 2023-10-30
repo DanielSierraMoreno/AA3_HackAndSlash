@@ -23,56 +23,89 @@ public class ControllerManager : MonoBehaviour
     bool jump;
     bool canJump;
 
+    public bool MouseControl;
+    Vector2 leftStick;
+    Vector2 rightStick;
+    InputAction.CallbackContext X;
+    InputAction.CallbackContext O;
+    InputAction.CallbackContext Box;
+    InputAction.CallbackContext Triangle;
+    InputAction.CallbackContext R2;
     // Start is called before the first frame update
     void Start()
     {
+        leftStick = new Vector2();
+        rightStick = new Vector2();
+
         jump = false;
         canJump = true;
         dejarMantenerCuadrado = false;
         dejarMantenerTriangulo = false;
         for (int i = 0; i < Gamepad.all.Count; i++)
         {
-            Debug.Log(Gamepad.all[i].name);
             controller = Gamepad.all[i];
         }
     }
     public bool GetController()
     {
-        if (controller == null)
-        {
-            for (int i = 0; i < Gamepad.all.Count; i++)
-            {
-                Debug.Log(Gamepad.all[i].name);
-                controller = Gamepad.all[i];
-                return true;
-            }
+        return true;
+    }
 
-            return false;
-
-        }
-        else
-        {
-            return true;
-
-        }
+    public void GetLeftJoystick(InputAction.CallbackContext context)
+    {
+        leftStick = context.ReadValue<Vector2>();
+    }
+    public void GetRightJoystick(InputAction.CallbackContext context)
+    {
+        rightStick = context.ReadValue<Vector2>();
+    }
+    public void GetR2(InputAction.CallbackContext context)
+    {
+        R2 = context;
+    }
+    public void GetX(InputAction.CallbackContext context)
+    {
+        X = context;
+    }
+    public void GetO(InputAction.CallbackContext context)
+    {
+        O = context;
+    }
+    public void GetBox(InputAction.CallbackContext context)
+    {
+        Box = context;
+    }
+    public void GetTriangle(InputAction.CallbackContext context)
+    {
+        Triangle = context;
     }
     public bool StartMove()
     {
 
-        return controller.leftStick.ReadValue().magnitude > 0.3f;
+        return leftStick.magnitude > 0.3f;
+
+        
+
     }
     public Vector2 LeftStickValue()
     {
-        return controller.leftStick.ReadValue();
+
+            return leftStick;
+
+        
+
     }
     public Vector2 RightStickValue()
     {
-        return controller.rightStick.ReadValue();
+
+        return rightStick;
     }
+
     public bool RightTriggerPressed()
     {
-
-        return controller.rightTrigger.isPressed;
+        if (R2.action == null)
+            return false;
+        return R2.action.IsPressed();
     }
     public void ResetBotonesAtaques()
     {
@@ -84,7 +117,9 @@ public class ControllerManager : MonoBehaviour
 
     public bool CheckIfJump()
     {
-        if (controller.aButton.wasPressedThisFrame && canJump)
+        if (X.action == null)
+            return false;
+        if (X.action.WasPressedThisFrame() && canJump)
         {
             jump = true;
             canJump = false;
@@ -108,69 +143,75 @@ public class ControllerManager : MonoBehaviour
         ataqueCuadradoCargado = false;
         ataqueTrianguloCargado = false;
 
-        if (controller.xButton.wasPressedThisFrame)
+        if (Box.action != null)
         {
-            delayCuadrado = Time.time;
-            cuadradoHold = true;
-        }
-        if (controller.yButton.wasPressedThisFrame)
-        {
-            delayTriangulo = Time.time;
-            trianguloHold = true;
+            if (Box.action.WasPressedThisFrame())
+            {
+                delayCuadrado = Time.time;
+                cuadradoHold = true;
+            }
 
-        }
-        if (controller.xButton.wasReleasedThisFrame && (Time.time - delayCuadrado) <= 0.5f)
-        {
-            ataqueCuadrado = true;
-        }
-        if (controller.yButton.wasReleasedThisFrame && (Time.time - delayTriangulo) <= 0.5f)
-        {
-            ataqueTriangulo = true;
+            if (Box.action.WasReleasedThisFrame() && (Time.time - delayCuadrado) <= 0.5f)
+            {
+                ataqueCuadrado = true;
+            }
+            if (Box.action.IsPressed() && (Time.time - delayCuadrado) > 0.5f && cuadradoHold)
+            {
+                ataqueCuadradoCargado = true;
+                cuadradoHold = false;
 
+            }
         }
-
-        if (controller.xButton.isPressed && (Time.time - delayCuadrado) > 0.5f && cuadradoHold)
+        if (Triangle.action != null)
         {
-            ataqueCuadradoCargado = true;
-            cuadradoHold = false;
+            if (Triangle.action.WasPressedThisFrame())
+            {
+                delayTriangulo = Time.time;
+                trianguloHold = true;
 
-        }
-        if (controller.yButton.isPressed && (Time.time - delayTriangulo) > 0.5f && trianguloHold)
-        {
-            ataqueTrianguloCargado = true;
-            trianguloHold = false;
+            }
+            if (Triangle.action.WasReleasedThisFrame() && (Time.time - delayTriangulo) <= 0.5f)
+            {
+                ataqueTriangulo = true;
 
+            }
+
+            if (Triangle.action.IsPressed() && (Time.time - delayTriangulo) > 0.5f && trianguloHold)
+            {
+                ataqueTrianguloCargado = true;
+                trianguloHold = false;
+
+            }
         }
+
+
+
+
+
     }
     // Update is called once per frame
     void Update()
     {
-        if (controller.aButton.wasReleasedThisFrame && !canJump)
+        
+        if(X.action != null)
         {
-            jump = false;
-            canJump = true;
+            if (X.action.WasReleasedThisFrame() && !canJump)
+            {
+                jump = false;
+                canJump = true;
+            }
         }
+
         ControlesAtaques();
     }
 
     public bool GetDash()
     {
-        return controller.bButton.wasPressedThisFrame;
-    }
-    public void StartVibration(float leftMotor, float rightMotor, float duration)
-    {
-        // Configurar la vibración
-        controller.SetMotorSpeeds(leftMotor, rightMotor);
+        if (O.action == null)
+            return false;
 
-        // Iniciar una rutina para detener la vibración después de la duración especificada
-        StartCoroutine(StopVibrationAfterDelay(duration));
+        return O.action.WasPressedThisFrame();
     }
 
-    private System.Collections.IEnumerator StopVibrationAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
 
-        // Detener la vibración
-        controller.SetMotorSpeeds(0f, 0f);
-    }
 }
