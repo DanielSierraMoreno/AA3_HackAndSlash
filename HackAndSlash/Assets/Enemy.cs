@@ -26,6 +26,7 @@ public class Enemy : MonoBehaviour
     public GameObject[] hitWhiteEffects;
 
     public GameObject hitEffect2;
+    float floor;
     //public GameObject hitEffect1;
     // Start is called before the first frame update
     void Start()
@@ -43,9 +44,28 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(GravityOn)
-        {
             RaycastHit hit;
+
+        if(!golpe)
+        {
+            if (Physics.Raycast(transform.position, transform.TransformDirection(-this.transform.up), out hit, 200, 1 << 7))
+            {
+                if (hit.distance > 0.25f)
+                {
+                    GravityOn = true;
+
+                }
+
+            }
+        }
+        if(this.transform.position.y < floor)
+        {
+            this.transform.position = new Vector3(this.transform.position.x, floor, this.transform.position.z);
+
+        }
+
+        if (GravityOn)
+        {
 
             if (Physics.Raycast(transform.position, transform.TransformDirection(-this.transform.up), out hit, 200, 1 << 7))
             {
@@ -55,15 +75,30 @@ public class Enemy : MonoBehaviour
                     ApplyGravity();
 
                 }
-                if (hit.distance < 0.65f)
+                else
                 {
+                    this.transform.position = new Vector3(this.transform.position.x, hit.point.y, this.transform.position.z);
                     GravityOn = false;
 
                 }
-                if (cayendo && hit.distance < 1)
+                if ((hit.distance > -1)&& (hit.distance < 1) && (this.GetComponent<Rigidbody>().velocity.y < 0))
+                {
+                    this.transform.position = new Vector3(this.transform.position.x, hit.point.y, this.transform.position.z);
+
+                }
+                if (hit.distance < 0.85f && !(this.GetComponent<Rigidbody>().velocity.y > 0))
+                {
+                    floor = hit.point.y;
+
+                    this.transform.position = new Vector3(this.transform.position.x, floor, this.transform.position.z);
+
+                    GravityOn = false;
+                }
+                if (cayendo && hit.distance < 1 && !(this.GetComponent<Rigidbody>().velocity.y > 0))
                 {
                     cayendo = false;
                     anim.CrossFadeInFixedTime("GolpeSuelo", 0.2f);
+                    this.transform.position = new Vector3(this.transform.position.x, floor, this.transform.position.z);
 
                     dañoOn = false;
 
@@ -73,13 +108,14 @@ public class Enemy : MonoBehaviour
 
 
         }
-        else if(golpe)
+
+        if(golpe)
         {
             this.GetComponent<Rigidbody>().AddForce(( transform.up * Time.deltaTime* VelFlotando) * fallSpeed.Evaluate(Time.deltaTime-delayCaer), ForceMode.Force);
 
                 if((Time.time-delayCaer) > fallDelay)
                 {
-                Debug.Log(delayCaer);
+
                     GravityOn = true;
                     anim.CrossFadeInFixedTime("Caer", 0.2f);
                     cayendo = true;
@@ -93,6 +129,7 @@ public class Enemy : MonoBehaviour
     void Levantarse()
     {
         anim.CrossFadeInFixedTime("Levantarse", 0.2f);
+        this.transform.position = new Vector3(this.transform.position.x, floor, this.transform.position.z);
 
         Invoke("Levantado", 0.4f);
 
@@ -139,21 +176,31 @@ public class Enemy : MonoBehaviour
     {
         if(dañoOn)
         {
-            if(other.CompareTag("GolpeVertical"))
+            if (other.CompareTag("GolpeVertical"))
             {
                 //GameObject.FindObjectOfType<ControllerManager>().StartVibration(0.5f, 0.5f, 0.2f);
 
                 anim.CrossFadeInFixedTime("GolpeSalto", 0.2f);
                 fallStartTime = Time.time;
                 GravityOn = true;
+                golpe = false;
                 other.GetComponent<AttackCollider>().enemyHitFeedback?.PlayFeedbacks();
+                Vector3 collisionPosition = (GameObject.FindGameObjectWithTag("PlayerCenter").transform.position - (this.transform.position + new Vector3(0f, 2f, 0f))).normalized;
+                int spawnIndex = Random.Range(0, hitWhiteEffects.Length);
+                GameObject hitToLook;
+                hitToLook = Instantiate(hitWhiteEffects[spawnIndex], (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
 
+
+
+                hitToLook = Instantiate(hitEffect2, (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
 
                 Invoke("delayFuerza", 0.1f);
 
                 Invoke("DelayAire", delayAire);
             }
-            else if (other.CompareTag("GolpeAire") && (golpe||GravityOn))
+            else if (other.CompareTag("GolpeAire") && (golpe || GravityOn))
             {
                 delayCaer = Time.time;
 
@@ -183,11 +230,32 @@ public class Enemy : MonoBehaviour
                 golpe = true;
 
             }
-            else
+            else if (other.CompareTag("GolpeVerticalCircular"))
+            {
+                rigidbody.AddForce(this.transform.up * other.GetComponent<AttackCollider>().KnockbackY * Time.fixedDeltaTime, ForceMode.Impulse);
+                anim.CrossFadeInFixedTime("GolpeSalto", 0.2f);
+                fallStartTime = Time.time;
+                GravityOn = true;
+                golpe = false;
+                other.GetComponent<AttackCollider>().enemyHitFeedback?.PlayFeedbacks();
+                Vector3 collisionPosition = (GameObject.FindGameObjectWithTag("PlayerCenter").transform.position - (this.transform.position + new Vector3(0f, 2f, 0f))).normalized;
+                int spawnIndex = Random.Range(0, hitWhiteEffects.Length);
+                GameObject hitToLook;
+                hitToLook = Instantiate(hitWhiteEffects[spawnIndex], (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
+
+
+
+                hitToLook = Instantiate(hitEffect2, (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
+
+                Invoke("DelayAire", delayAire);
+            }
+            else if (other.GetComponent<AttackCollider>() != null)
             {
                 if (other.GetComponent<AttackCollider>().enemyStandUp)
                 {
-                    Invoke("StandUp",1f);
+                    Invoke("StandUp", 1f);
                 }
                 else
                 {

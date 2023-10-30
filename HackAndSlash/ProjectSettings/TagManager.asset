@@ -9,6 +9,8 @@ TagManager:
   - PlayerCenter
   - GolpeLigero
   - GolpeFuerte
+  - GolpeVerticalCircular
+  - Enemy
   layers:
   - Default
   - TransparentFX
