@@ -112,7 +112,7 @@ public class Enemy : MonoBehaviour
 
         if(golpe)
         {
-            this.GetComponent<Rigidbody>().AddForce(( transform.up * Time.deltaTime* VelFlotando) * fallSpeed.Evaluate(Time.deltaTime-delayCaer), ForceMode.Force);
+            rigidbody.AddForce(( transform.up * Time.deltaTime* VelFlotando) * fallSpeed.Evaluate(Time.deltaTime-delayCaer), ForceMode.Force);
 
                 if((Time.time-delayCaer) > fallDelay)
                 {
@@ -146,7 +146,7 @@ public class Enemy : MonoBehaviour
     void ApplyGravity()
     {
         Vector3 gravity = new Vector3(0, this.gravity * (Time.time - fallStartTime), 0);
-        this.GetComponent<Rigidbody>().AddForce(gravity * Time.deltaTime, ForceMode.Force);
+        rigidbody.AddForce(gravity * Time.deltaTime, ForceMode.Force);
 
     }
     void DelayAire()
@@ -159,7 +159,9 @@ public class Enemy : MonoBehaviour
     }
     void delayFuerza()
     {
-        rigidbody.AddForce(this.transform.up * JumpForce * Time.fixedDeltaTime, ForceMode.Impulse);
+        rigidbody.velocity = Vector3.zero;
+
+        rigidbody.AddForce(this.transform.up * JumpForce, ForceMode.Impulse);
 
     }
     void StandUp()
@@ -177,6 +179,7 @@ public class Enemy : MonoBehaviour
     {
         if(dañoOn)
         {
+            this.GetComponent<Rigidbody>().velocity = Vector3.zero;
             if (other.CompareTag("GolpeVertical"))
             {
                 //GameObject.FindObjectOfType<ControllerManager>().StartVibration(0.5f, 0.5f, 0.2f);

@@ -117,6 +117,7 @@ public class PlayerController : MonoBehaviour
     Vector2 dashDirection;
     public float delayDashes;
     public GetEnemies enemieTarget;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -165,8 +166,10 @@ public class PlayerController : MonoBehaviour
         CheckIfStartMove();
         CheckIfIsFalling();
     }
+
     bool CheckIfNextAttack()
     {
+
         if (currentComboAttacks.combo == ComboAtaques.air2)
         {
             if ((Time.time - attackStartTime) >= currentComboAttacks.attacks[currentComboAttack].ataque && attacks == Attacks.AIR)
@@ -204,7 +207,8 @@ public class PlayerController : MonoBehaviour
 
         if ((Time.time - attackStartTime) >= currentComboAttacks.attacks[currentComboAttack].ataque)
         {
-                playerAnim.speed = 1;
+
+            playerAnim.speed = 1;
 
             if (currentComboAttack + 1 == currentComboAttacks.attacks.Length)
             {
@@ -793,6 +797,7 @@ public class PlayerController : MonoBehaviour
 
             if (controller.ataqueTrianguloCargado && states != States.JUMP)
             {
+
                 if (enemieTarget.GetEnemie(this.transform.position) != Vector3.zero)
                     player.transform.LookAt(enemieTarget.GetEnemie(this.transform.position));
                 moveDirSaved = new Vector3();
