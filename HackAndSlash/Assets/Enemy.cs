@@ -24,9 +24,10 @@ public class Enemy : MonoBehaviour
     bool dañoOn;
 
     public GameObject[] hitWhiteEffects;
-
+    public GameObject[] bloodEffects;
     public GameObject hitEffect2;
     float floor;
+    Vector3 collisionPoint;
     //public GameObject hitEffect1;
     // Start is called before the first frame update
     void Start()
@@ -185,15 +186,18 @@ public class Enemy : MonoBehaviour
                 GravityOn = true;
                 golpe = false;
                 other.GetComponent<AttackCollider>().enemyHitFeedback?.PlayFeedbacks();
-                Vector3 collisionPosition = (GameObject.FindGameObjectWithTag("PlayerCenter").transform.position - (this.transform.position + new Vector3(0f, 2f, 0f))).normalized;
-                int spawnIndex = Random.Range(0, hitWhiteEffects.Length);
+
                 GameObject hitToLook;
-                hitToLook = Instantiate(hitWhiteEffects[spawnIndex], (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                collisionPoint = FindClosestPointOnCollider(other, transform.position);
+                hitToLook = Instantiate(hitWhiteEffects[Random.Range(0, hitWhiteEffects.Length)], collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
+                //hitToLook = Instantiate(hitWhiteEffects[spawnIndex], collisionPoint, Quaternion.identity);
+                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
+                hitToLook = Instantiate(bloodEffects[Random.Range(0, bloodEffects.Length)], collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
                 hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
 
+                Debug.Log("Now");
 
-
-                hitToLook = Instantiate(hitEffect2, (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                hitToLook = Instantiate(hitEffect2, collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
                 hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
 
                 Invoke("delayFuerza", 0.1f);
@@ -210,15 +214,17 @@ public class Enemy : MonoBehaviour
 
                 other.GetComponent<AttackCollider>().enemyHitFeedback?.PlayFeedbacks();
 
-                Vector3 collisionPosition = (GameObject.FindGameObjectWithTag("PlayerCenter").transform.position - (this.transform.position + new Vector3(0f, 2f, 0f))).normalized;
-                int spawnIndex = Random.Range(0, hitWhiteEffects.Length);
                 GameObject hitToLook;
-                hitToLook = Instantiate(hitWhiteEffects[spawnIndex], (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                collisionPoint = FindClosestPointOnCollider(other, transform.position);
+                hitToLook = Instantiate(hitWhiteEffects[Random.Range(0, hitWhiteEffects.Length)], collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
+                //hitToLook = Instantiate(hitWhiteEffects[spawnIndex], collisionPoint, Quaternion.identity);
+                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
+                hitToLook = Instantiate(bloodEffects[Random.Range(0, bloodEffects.Length)], collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
                 hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
 
+                Debug.Log("Now");
 
-
-                hitToLook = Instantiate(hitEffect2, (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                hitToLook = Instantiate(hitEffect2, collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
                 hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
 
 
@@ -238,15 +244,19 @@ public class Enemy : MonoBehaviour
                 GravityOn = true;
                 golpe = false;
                 other.GetComponent<AttackCollider>().enemyHitFeedback?.PlayFeedbacks();
-                Vector3 collisionPosition = (GameObject.FindGameObjectWithTag("PlayerCenter").transform.position - (this.transform.position + new Vector3(0f, 2f, 0f))).normalized;
-                int spawnIndex = Random.Range(0, hitWhiteEffects.Length);
+
+
                 GameObject hitToLook;
-                hitToLook = Instantiate(hitWhiteEffects[spawnIndex], (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                collisionPoint = FindClosestPointOnCollider(other, transform.position);
+                hitToLook = Instantiate(hitWhiteEffects[Random.Range(0, hitWhiteEffects.Length)], collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
+                //hitToLook = Instantiate(hitWhiteEffects[spawnIndex], collisionPoint, Quaternion.identity);
+                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
+                hitToLook = Instantiate(bloodEffects[Random.Range(0, bloodEffects.Length)], collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
                 hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
 
+                Debug.Log("Now");
 
-
-                hitToLook = Instantiate(hitEffect2, (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                hitToLook = Instantiate(hitEffect2, collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
                 hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
 
                 Invoke("DelayAire", delayAire);
@@ -277,20 +287,27 @@ public class Enemy : MonoBehaviour
                 Vector3 ForceDirection = (player - (enemy)).normalized;
                 rigidbody.AddForce(-ForceDirection * other.GetComponent<AttackCollider>().Knockback * Time.fixedDeltaTime, ForceMode.Impulse);
 
-                Vector3 collisionPosition = (GameObject.FindGameObjectWithTag("PlayerCenter").transform.position - (this.transform.position + new Vector3(0f, 2f, 0f))).normalized;
-
-                int spawnIndex = Random.Range(0, hitWhiteEffects.Length);
+               // Vector3 collisionPosition = (GameObject.FindGameObjectWithTag("PlayerCenter").transform.position - (this.transform.position + new Vector3(0f, 2f, 0f))).normalized;
                 GameObject hitToLook;
-                hitToLook = Instantiate(hitWhiteEffects[spawnIndex], (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                collisionPoint = FindClosestPointOnCollider(other, transform.position);
+                hitToLook = Instantiate(hitWhiteEffects[Random.Range(0,hitWhiteEffects.Length)], collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
+                //hitToLook = Instantiate(hitWhiteEffects[spawnIndex], collisionPoint, Quaternion.identity);
+                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
+                hitToLook = Instantiate(bloodEffects[Random.Range(0, bloodEffects.Length)], collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
                 hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
 
+                Debug.Log("Now");
 
-
-                hitToLook = Instantiate(hitEffect2, (this.transform.position + new Vector3(0f, 2f, 0f)) + (collisionPosition * 1f), Quaternion.identity);
+                hitToLook = Instantiate(hitEffect2, collisionPoint + new Vector3(0f,1f,0f), Quaternion.identity);
                 hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
             }
 
         }
-     
+
+
+        Vector3 FindClosestPointOnCollider(Collider collider, Vector3 point)
+        {
+            return collider.ClosestPointOnBounds(point);
+        }
     }
 }
