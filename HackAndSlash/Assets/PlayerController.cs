@@ -118,10 +118,14 @@ public class PlayerController : MonoBehaviour
     public float delayDashes;
     public GetEnemies enemieTarget;
 
+    public GameObject[] dashEffects;
+
+    bool dashDown;
+
     // Start is called before the first frame update
     void Start()
     {
-        player.transform.GetChild(0).GetComponent<TrailsFX.TrailEffect>().enabled = false;
+
 
         attackFinished = false;
         controller = GameObject.FindAnyObjectByType<ControllerManager>().GetComponent<ControllerManager>();
@@ -340,6 +344,12 @@ public class PlayerController : MonoBehaviour
                 return true;
 
             }
+            else 
+            {
+                this.transform.position = new Vector3(this.transform.position.x, hit.point.y, this.transform.position.z);
+
+                return CheckIfLand();
+            }
 
         }
         return false;
@@ -416,7 +426,11 @@ public class PlayerController : MonoBehaviour
         }
         return false;
     }
-
+    private IEnumerator DashEffectDisable(float time, int dash)
+    {
+        yield return new WaitForSeconds(time);
+        dashEffects[dash].SetActive(false);
+    }
     // Update is called once per frame
     void Update()
     {
@@ -436,7 +450,10 @@ public class PlayerController : MonoBehaviour
 
                 }
                 if (CheckIfDash())
+                {
+                    dashDown = false;
                     break;
+                }
                 if (CheckAtaques())
                     break;
                 if (CheckIfIsFalling())
@@ -461,10 +478,19 @@ public class PlayerController : MonoBehaviour
                 switch (attacks)
                 {
                     case Attacks.GROUND:
-
+                        if (CheckIfDash())
+                        {
+                            dashDown = false;
+                            break;
+                        }
                         break;
                     case Attacks.AIR:
+                        if (CheckIfDash())
+                        {
+                            dashDown = true;
 
+                            break;
+                        }
 
                         break;
                     case Attacks.FALL:
@@ -472,7 +498,12 @@ public class PlayerController : MonoBehaviour
 
                         break;
                     case Attacks.RUN:
+                        if (CheckIfDash())
+                        {
+                            dashDown = false;
 
+                            break;
+                        }
                         break;
                 }
 
@@ -486,8 +517,21 @@ public class PlayerController : MonoBehaviour
                 switch(dash)
                 {
                     case Dash.START:
-                        if((Time.time-delayDash) >0.30f)
+                        if((Time.time-delayDash) >0.20f)
                         {
+                            playerAnim.speed = 1;
+                            for(int i =0; i < dashEffects.Length;i++)
+                            {
+                                if(dashEffects[i].activeSelf == false)
+                                {
+                                    dashEffects[i].SetActive(true);
+                                    StartCoroutine(DashEffectDisable(2,i));
+                                    break;
+                                }
+                            }
+
+
+
                             if(dashDirection == new Vector2(0,-1))
                             {
                                 player.transform.GetChild(3).transform.localPosition += new Vector3(dashDirection.x, 0, dashDirection.y).normalized;
@@ -507,22 +551,45 @@ public class PlayerController : MonoBehaviour
                             }
 
 
-                            player.transform.GetChild(0).GetComponent<TrailsFX.TrailEffect>().enabled = true;
+
                             delayDash = Time.time;
                             dash = Dash.DASH;
 
                         }
                         break;
                     case Dash.DASH:
-                        if ((Time.time - delayDash) > 0.2f)
+                        if ((Time.time - delayDash) > 0.10f)
                         {
                             delayDash = Time.time;
 
                             dash = Dash.END;
 
                             playerAnim.CrossFadeInFixedTime("DashAparecer", 0.2f);
-                            player.transform.GetChild(0).GetComponent<TrailsFX.TrailEffect>().enabled = false;
 
+                            for (int i = 0; i < dashEffects.Length; i++)
+                            {
+                                if (dashEffects[i].activeSelf == false)
+                                {
+                                    dashEffects[i].SetActive(true);
+                                    StartCoroutine(DashEffectDisable(2, i));
+                                    break;
+
+                                }
+                            }
+
+                        }
+
+                        if(dashDown)
+                        {
+                            RaycastHit hit;
+
+                            if (Physics.Raycast(transform.position, transform.TransformDirection(-this.transform.up), out hit, 20, 1 << 7))
+                            {
+                                if ((hit.distance > 0.5f))
+                                {
+                                    this.GetComponent<Rigidbody>().AddForce(-this.transform.up * 5000 * Time.fixedDeltaTime, ForceMode.Force);
+                                }
+                            }
                         }
                         break;
                     case Dash.DOUBLEDASH:
@@ -532,10 +599,11 @@ public class PlayerController : MonoBehaviour
 
                         break;
                     case Dash.END:
-                        if ((Time.time - delayDash) > 0.15f)
+                        if ((Time.time - delayDash) > 0.20f)
                         {
                             delayDash = Time.time;
                                moveDirSaved = new Vector3();
+
                             if (CheckIfIsFalling())
                                 break;
                             CheckIfReturnIdle();
@@ -552,7 +620,11 @@ public class PlayerController : MonoBehaviour
                 ApplyGravity();
                 this.GetComponent<Rigidbody>().drag = 5;
                 if (CheckIfDash())
+                {
+                    dashDown = true;
+
                     break;
+                }
                 switch (moves)
                 {
                     case Moves.WALK:
@@ -600,7 +672,11 @@ public class PlayerController : MonoBehaviour
             case States.MOVE:
                 this.GetComponent<Rigidbody>().drag = 15;
                 if (CheckIfDash())
+                {
+                    dashDown = false;
+
                     break;
+                }
                 if (CheckIfIsFalling())
                     break;
                 if (CheckAtaques())
@@ -627,7 +703,11 @@ public class PlayerController : MonoBehaviour
                 break;
             case States.DELAYMOVE:
                 if (CheckIfDash())
+                {
+                    dashDown = false;
+
                     break;
+                }
                 if (CheckAtaques())
                     break;
                 CheckIfReturnIdle();

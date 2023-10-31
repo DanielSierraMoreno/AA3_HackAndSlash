@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Chispas : MonoBehaviour
 {
+    public ParticleSystem[] effects;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,15 +20,23 @@ public class Chispas : MonoBehaviour
     {
         if (!other.CompareTag("Enemy"))
         {
-            this.transform.GetChild(0).gameObject.SetActive(true);
+            foreach(ParticleSystem effect in effects)
+            {
+                if(!effect.isEmitting)
+                effect.Play();
+            }
+
         }
     }
     private void OnTriggerExit(Collider other)
     {
         if(!other.CompareTag("Enemy"))
         {
-            this.transform.GetChild(0).gameObject.SetActive(false);
-
+            foreach (ParticleSystem effect in effects)
+            {
+                if (effect.isEmitting)
+                    effect.Stop();
+            }
         }
     }
 }
