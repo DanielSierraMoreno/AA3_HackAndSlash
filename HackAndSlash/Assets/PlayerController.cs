@@ -347,19 +347,16 @@ public class PlayerController : MonoBehaviour
             else 
             {
                 this.transform.position = new Vector3(this.transform.position.x, hit.point.y, this.transform.position.z);
+                doubleJump = false;
 
                 return CheckIfLand();
             }
 
         }
         return false;
-        if (false)
-        {
-
-        }
 
 
-        return false;
+
     }
 
     ComboAtaques GetCurrentAttackCombo()
@@ -1051,7 +1048,7 @@ public class PlayerController : MonoBehaviour
             states = States.IDLE;
             moves = Moves.IDLE;
             playerAnim.CrossFadeInFixedTime("Idle", 0.2f);
-
+            doubleJump = false;
 
         }
     }
