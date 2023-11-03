@@ -157,13 +157,7 @@ public class Enemy : MonoBehaviour
         golpe = true;
 
     }
-    void delayFuerza()
-    {
-        rigidbody.velocity = Vector3.zero;
 
-        rigidbody.AddForce(this.transform.up * JumpForce, ForceMode.Impulse);
-
-    }
     void StandUp()
     {
         anim.CrossFadeInFixedTime("StandUp", 0.2f);
@@ -203,7 +197,9 @@ public class Enemy : MonoBehaviour
                 hitToLook = Instantiate(hitEffect2, collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
                 hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
 
-                Invoke("delayFuerza", 0.1f);
+                rigidbody.velocity = Vector3.zero;
+
+                rigidbody.AddForce(this.transform.up * JumpForce, ForceMode.Impulse);
 
                 Invoke("DelayAire", delayAire);
             }

@@ -122,6 +122,8 @@ public class PlayerController : MonoBehaviour
 
     bool dashDown;
 
+    float landHeight;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -191,6 +193,7 @@ public class PlayerController : MonoBehaviour
                     if (hit.distance < 0.55)
                     {
                         playerAnim.speed = 1;
+                        StartCoroutine(DelayGolpe(currentComboAttacks.attacks[currentComboAttack].delayGolpe, currentComboAttack));
 
                         playerAnim.CrossFadeInFixedTime("LandAttack", 0.1f);
                         doubleJump = false;
@@ -201,6 +204,9 @@ public class PlayerController : MonoBehaviour
                         states = States.IDLE;
                         currentComboAttack = -1;
                         moveDirSaved = new Vector3();
+                        landHeight = hit.point.y;
+                        this.transform.position = new Vector3(this.transform.position.x, landHeight + 0.2f, this.transform.position.z);
+
                         return true;
                     }
 
@@ -253,19 +259,29 @@ public class PlayerController : MonoBehaviour
     void ApplyGravity()
     {
         Vector3 gravity = new Vector3(0, this.gravity * (Time.time - fallStartTime), 0);
-        this.GetComponent<Rigidbody>().AddForce(gravity * Time.deltaTime, ForceMode.Force);
+        this.GetComponent<Rigidbody>().AddForce(gravity * Time.fixedDeltaTime, ForceMode.Force);
 
     }
     void moveInAir(float vel)
     {
+        RaycastHit hit;
 
-        // Smoothly rotate towards the target point.
-        player.transform.LookAt(player.transform.position + moveDirSaved);
-        if (moves == Moves.IDLE)
-            this.GetComponent<Rigidbody>().AddForce(moveDirSaved * 0 * Time.deltaTime, ForceMode.Force);
-        else
-            this.GetComponent<Rigidbody>().AddForce(moveDirSaved * vel * Time.deltaTime, ForceMode.Force);
+        if (Physics.Raycast(transform.position, transform.TransformDirection(this.transform.GetChild(0).forward), out hit, 20))
+        {
+            if(hit.distance < 1)
+            {
+                return;
+            }
 
+            // Smoothly rotate towards the target point.
+
+
+        }                
+                    player.transform.LookAt(player.transform.position + moveDirSaved);
+                if (moves == Moves.IDLE)
+                    this.GetComponent<Rigidbody>().AddForce(moveDirSaved * 0 * Time.deltaTime, ForceMode.Force);
+                else
+                    this.GetComponent<Rigidbody>().AddForce(moveDirSaved * vel * Time.deltaTime, ForceMode.Force);
     }
 
     private IEnumerator DelayGolpe(float time, int golpe)
@@ -298,7 +314,7 @@ public class PlayerController : MonoBehaviour
 
         playerAnim.speed = 1.5f;
         currentComboAttack++;
-        if (currentComboAttacks.attacks[currentComboAttack].collider != null)
+        if (currentComboAttacks.attacks[currentComboAttack].collider != null && currentComboAttacks.combo != ComboAtaques.air2)
         {
 
             for(int i = 0; i <= currentComboAttacks.attacks[currentComboAttack].repeticionGolpes;i++)
@@ -344,12 +360,18 @@ public class PlayerController : MonoBehaviour
                 return true;
 
             }
-            else 
+            else if (hit.distance <0)
             {
-                this.transform.position = new Vector3(this.transform.position.x, hit.point.y, this.transform.position.z);
+                this.transform.position = new Vector3(this.transform.position.x, hit.point.y+0.2f, this.transform.position.z);
                 doubleJump = false;
 
                 return CheckIfLand();
+            }
+            else
+            {
+                this.transform.position = new Vector3(this.transform.position.x, hit.point.y + 0.2f, this.transform.position.z);
+                doubleJump = false;
+                return false;
             }
 
         }
@@ -410,6 +432,7 @@ public class PlayerController : MonoBehaviour
         {
             if ((hit.distance < 2 * ((gravity * (Time.time - fallStartTime)) / gravity) || hit.distance < 0.5f))
             {
+                landHeight = hit.point.y;
                 timeLanding = Time.time;
                 if (!playerAnim.GetCurrentAnimatorStateInfo(0).IsName("Land"))
                     playerAnim.CrossFadeInFixedTime("Land", 0.2f);
@@ -438,10 +461,13 @@ public class PlayerController : MonoBehaviour
         switch (states)
         {
             case States.IDLE:
+                 var a = this.transform.position;
                 if (attacks == Attacks.FALL && (Time.time - dealyAttackFall) < 0.5f)
                     break;
                 else if (attacks == Attacks.FALL && (Time.time - dealyAttackFall) >= 0.5f)
                 {
+                    this.transform.position = new Vector3(this.transform.position.x, landHeight + 0.2f, this.transform.position.z);
+
                     attacks = Attacks.GROUND;
                     playerAnim.CrossFadeInFixedTime("Idle", 0.2f);
 
@@ -614,7 +640,7 @@ public class PlayerController : MonoBehaviour
 
                 break;
             case States.JUMP:
-                ApplyGravity();
+                 ApplyGravity();
                 this.GetComponent<Rigidbody>().drag = 5;
                 if (CheckIfDash())
                 {
@@ -658,7 +684,7 @@ public class PlayerController : MonoBehaviour
                         {
                             player.transform.GetChild(1).Rotate(new Vector3(0,1,0),-90);
                             playerAnim.CrossFadeInFixedTime("Idle", 0.2f);
-
+                            this.transform.position = new Vector3(this.transform.position.x, landHeight+0.2f, this.transform.position.z);
                             //states = States.IDLE;
                             CheckIfReturnIdle();
                             CheckMove();
@@ -1078,4 +1104,7 @@ public class PlayerController : MonoBehaviour
 
         }
     }
+
+
 }
+

@@ -22,6 +22,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Plastic_Black_Mat
   m_Shader: {fileID: 4800000, guid: dcda956a6808f8c4e84b1460ad3ac6eb, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _AD_CUTOUT_GEOMETRIC_TYPE_CONE_SMOOTH
   - _AD_CUTOUT_STANDARD_SOURCE_CUSTOM_MAP
@@ -47,6 +49,7 @@ Material:
   - TransparentDepthPrepass
   - TransparentDepthPostpass
   - TransparentBackface
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -540,7 +543,8 @@ Material:
     - _AdvancedDissolveCutoutMap3_Scroll: {r: 0, g: 0, b: 0, a: 0}
     - _AdvancedDissolveCutoutMap3_Tiling: {r: 1, g: 1, b: 1, a: 0}
     - _AdvancedDissolveCutoutMap3_Triplanar_Tiling: {r: 1, g: 1, b: 1, a: 1}
-    - _AdvancedDissolveCutoutParametric1Normal: {r: 0.41310218, g: -0.7040947, b: 0.5775787, a: 0}
+    - _AdvancedDissolveCutoutParametric1Normal: {r: 0.41310218, g: -0.7040947, b: 0.5775787,
+        a: 0}
     - _AdvancedDissolveCutoutParametric1Position: {r: -0.2, g: 2.39, b: -2.68, a: 0}
     - _AdvancedDissolveCutoutParametric2Normal: {r: 1, g: 0, b: 0, a: 0}
     - _AdvancedDissolveCutoutParametric2Position: {r: 0, g: 0, b: 0, a: 0}
@@ -573,7 +577,8 @@ Material:
     - _AdvancedDissolveDynamicMask3Position: {r: 0, g: 0, b: 0, a: 0}
     - _AdvancedDissolveDynamicMask4Normal: {r: 1, g: 0, b: 0, a: 0}
     - _AdvancedDissolveDynamicMask4Position: {r: 0, g: 0, b: 0, a: 0}
-    - _AdvancedDissolveDynamicMaskNormal: {r: -0.5575174, g: -0.61124897, b: -0.5617378, a: 0}
+    - _AdvancedDissolveDynamicMaskNormal: {r: -0.5575174, g: -0.61124897, b: -0.5617378,
+        a: 0}
     - _AdvancedDissolveDynamicMaskPosition: {r: 0.43, g: 0.65, b: -1.01, a: 0}
     - _AdvancedDissolveEdgeAdditionalColor: {r: 1, g: 0, b: 0, a: 1}
     - _AdvancedDissolveEdgeAdditionalColorIntensity: {r: 0, g: 0, b: 0, a: 0}
