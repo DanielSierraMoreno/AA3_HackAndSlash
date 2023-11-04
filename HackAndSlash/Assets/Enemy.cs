@@ -184,18 +184,11 @@ public class Enemy : MonoBehaviour
                 golpe = false;
                 other.GetComponent<AttackCollider>().enemyHitFeedback?.PlayFeedbacks();
 
-                GameObject hitToLook;
                 collisionPoint = FindClosestPointOnCollider(other, transform.position);
-                hitToLook = Instantiate(hitWhiteEffects[Random.Range(0, hitWhiteEffects.Length)], collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
-                //hitToLook = Instantiate(hitWhiteEffects[spawnIndex], collisionPoint, Quaternion.identity);
-                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
-                hitToLook = Instantiate(bloodEffects[Random.Range(0, bloodEffects.Length)], collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
-                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
-
-                Debug.Log("Now");
-
-                hitToLook = Instantiate(hitEffect2, collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
-                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
+                SpawnWhiteSplash(collisionPoint);
+                SpawnBloodSplash(collisionPoint);
+                SpawnHitLine(collisionPoint);
+                ComboManager.instance.IncreaseCombo();
 
                 rigidbody.velocity = Vector3.zero;
 
@@ -213,21 +206,11 @@ public class Enemy : MonoBehaviour
 
                 other.GetComponent<AttackCollider>().enemyHitFeedback?.PlayFeedbacks();
 
-                GameObject hitToLook;
                 collisionPoint = FindClosestPointOnCollider(other, transform.position);
-                hitToLook = Instantiate(hitWhiteEffects[Random.Range(0, hitWhiteEffects.Length)], collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
-                //hitToLook = Instantiate(hitWhiteEffects[spawnIndex], collisionPoint, Quaternion.identity);
-                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
-                hitToLook = Instantiate(bloodEffects[Random.Range(0, bloodEffects.Length)], collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
-                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
-
-                Debug.Log("Now");
-
-                hitToLook = Instantiate(hitEffect2, collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
-                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
-
-
-
+                SpawnWhiteSplash(collisionPoint);
+                SpawnBloodSplash(collisionPoint);
+                SpawnHitLine(collisionPoint);
+                ComboManager.instance.IncreaseCombo();
 
                 fallStartTime = Time.time;
                 GravityOn = false;
@@ -245,18 +228,11 @@ public class Enemy : MonoBehaviour
                 other.GetComponent<AttackCollider>().enemyHitFeedback?.PlayFeedbacks();
 
 
-                GameObject hitToLook;
                 collisionPoint = FindClosestPointOnCollider(other, transform.position);
-                hitToLook = Instantiate(hitWhiteEffects[Random.Range(0, hitWhiteEffects.Length)], collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
-                //hitToLook = Instantiate(hitWhiteEffects[spawnIndex], collisionPoint, Quaternion.identity);
-                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
-                hitToLook = Instantiate(bloodEffects[Random.Range(0, bloodEffects.Length)], collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
-                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
-
-                Debug.Log("Now");
-
-                hitToLook = Instantiate(hitEffect2, collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
-                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
+                SpawnWhiteSplash(collisionPoint);
+                SpawnBloodSplash(collisionPoint);
+                SpawnHitLine(collisionPoint);
+                ComboManager.instance.IncreaseCombo();
 
                 Invoke("DelayAire", delayAire);
             }
@@ -287,21 +263,34 @@ public class Enemy : MonoBehaviour
                 rigidbody.AddForce(-ForceDirection * other.GetComponent<AttackCollider>().Knockback * Time.fixedDeltaTime, ForceMode.Impulse);
 
                // Vector3 collisionPosition = (GameObject.FindGameObjectWithTag("PlayerCenter").transform.position - (this.transform.position + new Vector3(0f, 2f, 0f))).normalized;
-                GameObject hitToLook;
                 collisionPoint = FindClosestPointOnCollider(other, transform.position);
-                hitToLook = Instantiate(hitWhiteEffects[Random.Range(0,hitWhiteEffects.Length)], collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
-                //hitToLook = Instantiate(hitWhiteEffects[spawnIndex], collisionPoint, Quaternion.identity);
-                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
-                hitToLook = Instantiate(bloodEffects[Random.Range(0, bloodEffects.Length)], collisionPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
-                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
-
-                Debug.Log("Now");
-
-                hitToLook = Instantiate(hitEffect2, collisionPoint + new Vector3(0f,1f,0f), Quaternion.identity);
-                hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
+                SpawnWhiteSplash(collisionPoint);
+                SpawnBloodSplash(collisionPoint);
+                SpawnHitLine(collisionPoint);
+                ComboManager.instance.IncreaseCombo();
             }
 
         }
+
+        void SpawnWhiteSplash(Vector3 spawnPoint)
+        {
+            GameObject hitToLook = Instantiate(hitWhiteEffects[Random.Range(0, hitWhiteEffects.Length)], spawnPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
+            hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
+        }
+
+        void SpawnBloodSplash(Vector3 spawnPoint)
+        {
+            GameObject hitToLook = Instantiate(bloodEffects[Random.Range(0, bloodEffects.Length)], spawnPoint + new Vector3(0f, 1f, 0f), Quaternion.identity);
+            hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
+        }
+
+        void SpawnHitLine(Vector3 spawnPoint)
+        {
+            GameObject hitToLook = Instantiate(hitEffect2, spawnPoint + new Vector3(Random.Range(0,0.15f), Random.Range(0.85f,1.15f), 0f), Quaternion.identity);
+            hitToLook.transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCenter").transform.position);
+        }
+
+
 
 
         Vector3 FindClosestPointOnCollider(Collider collider, Vector3 point)
