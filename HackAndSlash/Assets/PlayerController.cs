@@ -501,19 +501,10 @@ public class PlayerController : MonoBehaviour
                 switch (attacks)
                 {
                     case Attacks.GROUND:
-                        if (CheckIfDash())
-                        {
-                            dashDown = false;
-                            break;
-                        }
+
                         break;
                     case Attacks.AIR:
-                        if (CheckIfDash())
-                        {
-                            dashDown = true;
 
-                            break;
-                        }
 
                         break;
                     case Attacks.FALL:
@@ -521,12 +512,7 @@ public class PlayerController : MonoBehaviour
 
                         break;
                     case Attacks.RUN:
-                        if (CheckIfDash())
-                        {
-                            dashDown = false;
 
-                            break;
-                        }
                         break;
                 }
 
