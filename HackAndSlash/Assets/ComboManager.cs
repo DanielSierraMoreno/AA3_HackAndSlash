@@ -1,14 +1,6 @@
-using DigitalRuby.ThunderAndLightning;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.Tracing;
-using Unity.VisualScripting;
-using UnityEditor;
-using UnityEditorInternal.VR;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using static ComboManager;
 
 public class ComboManager : MonoBehaviour
 {
@@ -23,14 +15,19 @@ public class ComboManager : MonoBehaviour
     }
 
     public Material[] letterImageMaterial;
-    public Image comboLetterImage; // Renamed to avoid conflict
+    public Image comboLetterImage;
+    public Slider comboSlider; // Reference to the combo slider
     public static ComboManager instance;
 
     public int comboCount;
+    public int hitsPerLetter = 10;
+    public float comboDecayTime = 5.0f;
+    public float animationDuration = 0.77f;
 
     private Material originalMaterial;
-    private float animationDuration = 0.77f;
-    private ComboLetter currentComboLetter = ComboLetter.NONE; // Track the current combo letter
+    public ComboLetter currentComboLetter = ComboLetter.NONE;
+    public float lastHitTime;
+    public float comboDecayTimer = 0.0f; // Timer to control combo decay
 
     private void Awake()
     {
@@ -46,8 +43,39 @@ public class ComboManager : MonoBehaviour
 
     private void Start()
     {
-        OnLetterChangeIn();
+        comboLetterImage.gameObject.SetActive(false);
         originalMaterial = comboLetterImage.material;
+        lastHitTime = Time.time;
+
+        // Set initial values
+        comboCount = 0;
+        currentComboLetter = ComboLetter.NONE;
+    }
+
+    private void Update()
+    {
+        int hitsNeededForNextLetter = hitsPerLetter * (int)currentComboLetter;
+        if (comboCount >= hitsNeededForNextLetter)
+        {
+            TryChangeLetter(currentComboLetter + 1);
+        }
+        else if (comboCount < hitsNeededForNextLetter && currentComboLetter != ComboLetter.NONE)
+        {
+            TryChangeLetter(currentComboLetter - 1);
+        }
+
+        // Update the combo slider value based on combo count
+        comboSlider.value = comboCount;
+
+        comboDecayTimer += Time.deltaTime;
+        if (comboDecayTimer >= 3.0f) // Adjust the time here as needed
+        {
+            comboDecayTimer = 0.0f;
+            if (comboCount > 0)
+            {
+                comboCount -= 1;
+            }
+        }
     }
 
     private void OnLetterChangeIn()
@@ -60,47 +88,30 @@ public class ComboManager : MonoBehaviour
         comboLetterImage.material.DOFloat(0.0f, "_Animation_Factor", animationDuration);
     }
 
-    private void Update()
-    {
-        if (comboCount >= 0 && comboCount < 10)
-        {
-            TryChangeLetter(ComboLetter.D);
-        }
-        else if (comboCount >= 10 && comboCount < 20)
-        {
-            TryChangeLetter(ComboLetter.C);
-        }
-        else if (comboCount >= 20 && comboCount < 30)
-        {
-            TryChangeLetter(ComboLetter.B);
-        }
-        else if (comboCount >= 30 && comboCount < 40)
-        {
-            TryChangeLetter(ComboLetter.A);
-        }
-        else if (comboCount >= 40 && comboCount <= 100)
-        {
-            TryChangeLetter(ComboLetter.S);
-        }
-        else
-        {
-            TryChangeLetter(ComboLetter.NONE);
-        }
-    }
-
     private void TryChangeLetter(ComboLetter newLetter)
     {
-        if (newLetter != currentComboLetter)
+        int hitsNeededForNewLetter = hitsPerLetter * (int)newLetter;
+
+        if (newLetter != currentComboLetter && comboCount >= hitsNeededForNewLetter)
         {
-            // If the new letter is different from the current letter, change it
             ChangeLetterWithTransition(newLetter);
             currentComboLetter = newLetter;
+            comboLetterImage.gameObject.SetActive(true);
+
+            // Reset the slider value when the letter changes
+            
+        }
+        else if (comboCount < 10)
+        {
+            comboLetterImage.gameObject.SetActive(false);
         }
     }
 
     public void IncreaseCombo()
     {
         comboCount++;
+        lastHitTime = Time.time;
+        comboDecayTimer = 0.0f; // Reset the combo decay timer
     }
 
     public int GetComboCount()
@@ -110,49 +121,68 @@ public class ComboManager : MonoBehaviour
 
     public void ResetCombo()
     {
-        comboCount = 0;
+        if (comboCount > 0)
+        {
+            comboCount -= 1;
+        }
     }
 
     private void ChangeLetterWithTransition(ComboLetter letter)
     {
-        // Hide the previous letter with a transition
         OnLetterChangeOut();
-
-        // Delay for the duration of the transition
+        //comboSlider.value = 0.0f;
         DOTween.Sequence().AppendInterval(animationDuration).OnComplete(() =>
         {
-            ChangeImage(letter); // Bring in the new letter
-            OnLetterChangeIn(); // Show the new letter with a transition
+            ChangeImage(letter);
+            OnLetterChangeIn();
         });
     }
 
     private void ChangeImage(ComboLetter letter)
     {
         Material materialReturn = ChangeMaterial(letter);
+
         if (comboLetterImage != null)
         {
-            comboLetterImage.material = materialReturn;
+            if (letter != ComboLetter.NONE)
+            {
+                comboLetterImage.material = materialReturn;
+            }
+            else
+            {
+                comboLetterImage.material = originalMaterial;
+            }
         }
     }
 
     private Material ChangeMaterial(ComboLetter letter)
     {
+        Material materialReturn = null;
+
         switch (letter)
         {
             case ComboLetter.NONE:
-                return null;
+                break;
             case ComboLetter.D:
-                return letterImageMaterial[0];
+                materialReturn = letterImageMaterial[0];
+                break;
             case ComboLetter.C:
-                return letterImageMaterial[1];
+                materialReturn = letterImageMaterial[1];
+                break;
             case ComboLetter.B:
-                return letterImageMaterial[2];
+                materialReturn = letterImageMaterial[2];
+                break;
             case ComboLetter.A:
-                return letterImageMaterial[3];
+                materialReturn = letterImageMaterial[3];
+                break;
             case ComboLetter.S:
-                return letterImageMaterial[4];
+                materialReturn = letterImageMaterial[4];
+                break;
             default:
-                return null;
+                materialReturn = null;
+                break;
         }
+
+        return materialReturn;
     }
 }
