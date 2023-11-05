@@ -1,3 +1,4 @@
+using DamageNumbersPro;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,7 @@ using UnityEngine.AI;
 
 public class Enemy1 : MonoBehaviour
 {
+    public DamageNumber numberPrefab;
     enum States { MOVE, ATTACK, FLY, IDLE,DELAY, JUMP, HIT};
     enum Move { WALK, RUN};
     enum Fly {START,UP,AIR,DOWN,ATTACK};
@@ -586,6 +588,7 @@ public class Enemy1 : MonoBehaviour
                     SpawnWhiteSplash(collisionPoint);
                     SpawnBloodSplash(collisionPoint);
                     SpawnHitLine(collisionPoint);
+                    DamageNumber damageNumber = numberPrefab.Spawn(collisionPoint, Random.Range(1, 100));
                     ComboManager.instance.IncreaseCombo();
                 }
             }

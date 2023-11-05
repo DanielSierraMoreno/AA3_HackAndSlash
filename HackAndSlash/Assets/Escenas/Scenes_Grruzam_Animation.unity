@@ -2321,6 +2321,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4784291743086481473, guid: cac2b39452c31bd44b0979fe99880dc2,
         type: 3}
+      propertyPath: numberPrefab
+      value: 
+      objectReference: {fileID: 4976151793224397268, guid: d7ddc6e934e42e94ba1b474312ff4083,
+        type: 3}
+    - target: {fileID: 4784291743086481473, guid: cac2b39452c31bd44b0979fe99880dc2,
+        type: 3}
       propertyPath: speedFlotando
       value: 10
       objectReference: {fileID: 0}
@@ -4028,7 +4034,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 282840810}
   m_LocalRotation: {x: 0.10523593, y: -0.6954921, z: 0.10409394, w: 0.70312214}
-  m_LocalPosition: {x: -159.97823, y: 1.1962898, z: -39.679234}
+  m_LocalPosition: {x: -157.30724, y: 1.1962898, z: -39.679234}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5590,6 +5596,12 @@ PrefabInstance:
       propertyPath: delayJumpHit
       value: 0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 4784291743086481473, guid: cac2b39452c31bd44b0979fe99880dc2,
+        type: 3}
+      propertyPath: numberPrefab
+      value: 
+      objectReference: {fileID: 4976151793224397268, guid: d7ddc6e934e42e94ba1b474312ff4083,
+        type: 3}
     - target: {fileID: 4784291743086481473, guid: cac2b39452c31bd44b0979fe99880dc2,
         type: 3}
       propertyPath: speedFlotando
@@ -22714,10 +22726,7 @@ MonoBehaviour:
   comboNumber: {fileID: 566039226}
   comboCount: 0
   comboDecayTime: 30
-  animationDuration: 0.77
   currentComboLetter: 0
-  lastHitTime: 0
-  comboDecayTimer: 0
   totalComboHitsPlusHowManyINeed: 0
 --- !u!4 &1645290912
 Transform:
@@ -23003,6 +23012,12 @@ PrefabInstance:
       propertyPath: delayJumpHit
       value: 0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 4784291743086481473, guid: cac2b39452c31bd44b0979fe99880dc2,
+        type: 3}
+      propertyPath: numberPrefab
+      value: 
+      objectReference: {fileID: 4976151793224397268, guid: d7ddc6e934e42e94ba1b474312ff4083,
+        type: 3}
     - target: {fileID: 4784291743086481473, guid: cac2b39452c31bd44b0979fe99880dc2,
         type: 3}
       propertyPath: speedFlotando
@@ -23455,7 +23470,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1684698348}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -159.97823, y: 1.1962898, z: -39.679234}
+  m_LocalPosition: {x: -157.30724, y: 1.1962898, z: -39.679234}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -32941,7 +32956,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -191.75854, y: 0}
+  m_AnchoredPosition: {x: -191.75854, y: -193}
   m_SizeDelta: {x: 383.5172, y: 383.5172}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2098036079
