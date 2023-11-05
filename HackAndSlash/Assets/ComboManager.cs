@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-
+using System.Collections.Generic;
+using TMPro;
 public class ComboManager : MonoBehaviour
 {
     public enum ComboLetter
@@ -16,18 +17,25 @@ public class ComboManager : MonoBehaviour
 
     public Material[] letterImageMaterial;
     public Image comboLetterImage;
-    public Slider comboSlider; // Reference to the combo slider
+    public Slider comboSlider;
+    public TMP_Text comboNumber;
     public static ComboManager instance;
 
     public int comboCount;
-    public int hitsPerLetter = 10;
+    private int hitsToUpgradeLetter;
+    private int hitsNeededForNextLetter;
     public float comboDecayTime = 5.0f;
-    public float animationDuration = 0.77f;
+    private float animationDuration = 0.77f;
 
     private Material originalMaterial;
     public ComboLetter currentComboLetter = ComboLetter.NONE;
-    public float lastHitTime;
-    public float comboDecayTimer = 0.0f; // Timer to control combo decay
+    private float lastHitTime;
+    private float comboDecayTimer = 0.0f;
+    public int totalComboHitsPlusHowManyINeed;
+
+    // Define a mapping between ComboLetter and hits to upgrade
+    private Dictionary<ComboLetter, int> hitsToUpgradeMapping;
+    private Dictionary<ComboLetter, float> comboDecayRates;
 
     private void Awake()
     {
@@ -46,15 +54,35 @@ public class ComboManager : MonoBehaviour
         comboLetterImage.gameObject.SetActive(false);
         originalMaterial = comboLetterImage.material;
         lastHitTime = Time.time;
-
-        // Set initial values
         comboCount = 0;
         currentComboLetter = ComboLetter.NONE;
+
+        // Initialize the mapping between ComboLetter and required hits to upgrade
+        hitsToUpgradeMapping = new Dictionary<ComboLetter, int>
+        {
+            { ComboLetter.NONE, 0 },
+            { ComboLetter.D, 4 },
+            { ComboLetter.C, 10 },
+            { ComboLetter.B, 20 },
+            { ComboLetter.A, 35 },
+            { ComboLetter.S, 50 }
+        };
+        comboDecayRates = new Dictionary<ComboLetter, float>
+        {
+            { ComboLetter.NONE, 1.0f },  
+            { ComboLetter.D, 1.0f },    
+            { ComboLetter.C, 1.75f },   
+            { ComboLetter.B, 1.9f },    
+            { ComboLetter.A, 2.0f },    
+            { ComboLetter.S, 5f }     
+        };
+
+        hitsToUpgradeLetter = hitsToUpgradeMapping[currentComboLetter];
+        hitsNeededForNextLetter = CalculateHitsNeededForLetter(currentComboLetter);
     }
 
     private void Update()
     {
-        int hitsNeededForNextLetter = hitsPerLetter * (int)currentComboLetter;
         if (comboCount >= hitsNeededForNextLetter)
         {
             TryChangeLetter(currentComboLetter + 1);
@@ -64,11 +92,35 @@ public class ComboManager : MonoBehaviour
             TryChangeLetter(currentComboLetter - 1);
         }
 
-        // Update the combo slider value based on combo count
-        comboSlider.value = comboCount;
+        if (currentComboLetter == ComboLetter.NONE)
+        {
+            comboLetterImage.gameObject.SetActive(false);
+            comboSlider.gameObject.SetActive(false);
+            comboNumber.gameObject.SetActive(false);
+        }
+        else
+        {
+            comboLetterImage.gameObject.SetActive(true);
+            comboSlider.gameObject.SetActive(true);
+            comboNumber.gameObject.SetActive(true);
 
+
+            comboNumber.text = comboCount.ToString();
+            comboSlider.value -= comboDecayRates[currentComboLetter] * Time.deltaTime;
+
+            if (comboSlider.value <= 0)
+            {
+                // Slider value reached 0, reset combo count and letter
+                comboCount = 0;
+                currentComboLetter = ComboLetter.NONE;
+                comboSlider.value = 0;
+            }
+        }
+
+   
         comboDecayTimer += Time.deltaTime;
-        if (comboDecayTimer >= 3.0f) // Adjust the time here as needed
+
+        if (comboDecayTimer >= comboDecayTime)
         {
             comboDecayTimer = 0.0f;
             if (comboCount > 0)
@@ -89,32 +141,58 @@ public class ComboManager : MonoBehaviour
     }
 
     private void TryChangeLetter(ComboLetter newLetter)
+{
+    if (newLetter != currentComboLetter)
     {
-        int hitsNeededForNewLetter = hitsPerLetter * (int)newLetter;
-
-        if (newLetter != currentComboLetter && comboCount >= hitsNeededForNewLetter)
+        if (currentComboLetter == ComboLetter.S)
         {
+                // If the current combo letter is 'S', keep the combo going
+                comboSlider.maxValue = 50;
+                return;
+        }
+        else if (comboCount >= CalculateHitsNeededForLetter(newLetter))
+        {
+            hitsToUpgradeLetter = hitsToUpgradeMapping[newLetter];
+            totalComboHitsPlusHowManyINeed = hitsToUpgradeMapping.ContainsKey(newLetter + 1) ? hitsToUpgradeMapping[newLetter + 1] : 0;
+            comboSlider.maxValue = totalComboHitsPlusHowManyINeed;
             ChangeLetterWithTransition(newLetter);
             currentComboLetter = newLetter;
-            comboLetterImage.gameObject.SetActive(true);
+        }
+    }
+}
 
-            // Reset the slider value when the letter changes
-            
-        }
-        else if (comboCount < 10)
+    private int CalculateHitsNeededForLetter(ComboLetter letter)
+    {
+        if (letter == ComboLetter.NONE)
         {
-            comboLetterImage.gameObject.SetActive(false);
+            return hitsToUpgradeMapping[ComboLetter.NONE];
         }
+
+        int hitsNeeded = hitsToUpgradeMapping[letter];
+        return hitsNeeded;
     }
 
     public void IncreaseCombo()
     {
         comboCount++;
         lastHitTime = Time.time;
-        comboDecayTimer = 0.0f; // Reset the combo decay timer
+        comboDecayTimer = 0.0f;
+        if (currentComboLetter == ComboLetter.S)
+        {
+            comboSlider.value = comboSlider.maxValue;
+        }
+        else
+        {
+            comboSlider.value = comboCount;
+        }
     }
 
     public int GetComboCount()
+    {
+        return comboCount;
+    }
+
+    public int GetTotalComboHits()
     {
         return comboCount;
     }
@@ -123,14 +201,13 @@ public class ComboManager : MonoBehaviour
     {
         if (comboCount > 0)
         {
-            comboCount -= 1;
+            comboCount--;
         }
     }
 
     private void ChangeLetterWithTransition(ComboLetter letter)
     {
         OnLetterChangeOut();
-        //comboSlider.value = 0.0f;
         DOTween.Sequence().AppendInterval(animationDuration).OnComplete(() =>
         {
             ChangeImage(letter);
