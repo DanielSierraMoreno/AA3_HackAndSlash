@@ -124,6 +124,7 @@ public class PlayerController : MonoBehaviour
 
     float landHeight;
 
+    bool stopAttack;
     // Start is called before the first frame update
     void Start()
     {
@@ -193,7 +194,18 @@ public class PlayerController : MonoBehaviour
                     if (hit.distance < 0.55)
                     {
                         playerAnim.speed = 1;
-                        StartCoroutine(DelayGolpe(currentComboAttacks.attacks[currentComboAttack].delayGolpe, currentComboAttack));
+                        if (currentComboAttacks.attacks[currentComboAttack].effects != null)
+                            currentComboAttacks.attacks[currentComboAttack].effects.PlayFeedbacks();
+
+                        currentComboAttacks.attacks[currentComboAttack].collider.GetComponent<AttackCollider>().enemyHitAnim = currentComboAttacks.attacks[currentComboAttack].enemyHitAnim;
+                        currentComboAttacks.attacks[currentComboAttack].collider.GetComponent<AttackCollider>().KnockbackY = currentComboAttacks.attacks[currentComboAttack].EnemyKnockBackForce.y;
+                        currentComboAttacks.attacks[currentComboAttack].collider.GetComponent<AttackCollider>().enemyStandUp = currentComboAttacks.attacks[currentComboAttack].EnemyStandUp;
+
+                        currentComboAttacks.attacks[currentComboAttack].collider.GetComponent<AttackCollider>().Knockback = currentComboAttacks.attacks[currentComboAttack].EnemyKnockBackForce.x;
+                        currentComboAttacks.attacks[currentComboAttack].collider.GetComponent<AttackCollider>().SetFeedback(currentComboAttacks.attacks[currentComboAttack].enemyFeedback);
+                        currentComboAttacks.attacks[currentComboAttack].collider.tag = currentComboAttacks.attacks[currentComboAttack].colliderTag;
+                        currentComboAttacks.attacks[currentComboAttack].collider.SetActive(true);
+                        StartCoroutine(DesactivarCollisionGolpe(0.05f, currentComboAttack));
 
                         playerAnim.CrossFadeInFixedTime("LandAttack", 0.1f);
                         doubleJump = false;
@@ -288,18 +300,23 @@ public class PlayerController : MonoBehaviour
     {
 
         yield return new WaitForSeconds(time);
-        if (currentComboAttacks.attacks[golpe].effects != null)
-            currentComboAttacks.attacks[golpe].effects.PlayFeedbacks();
 
-        currentComboAttacks.attacks[golpe].collider.GetComponent<AttackCollider>().enemyHitAnim = currentComboAttacks.attacks[golpe].enemyHitAnim;
-        currentComboAttacks.attacks[golpe].collider.GetComponent<AttackCollider>().KnockbackY = currentComboAttacks.attacks[golpe].EnemyKnockBackForce.y;
-        currentComboAttacks.attacks[golpe].collider.GetComponent<AttackCollider>().enemyStandUp = currentComboAttacks.attacks[golpe].EnemyStandUp;
+        if (states == States.ATTACK && !stopAttack)
+        {
+            if (currentComboAttacks.attacks[golpe].effects != null)
+                currentComboAttacks.attacks[golpe].effects.PlayFeedbacks();
 
-        currentComboAttacks.attacks[golpe].collider.GetComponent<AttackCollider>().Knockback = currentComboAttacks.attacks[golpe].EnemyKnockBackForce.x;
-        currentComboAttacks.attacks[golpe].collider.GetComponent<AttackCollider>().SetFeedback(currentComboAttacks.attacks[golpe].enemyFeedback);
-        currentComboAttacks.attacks[golpe].collider.tag = currentComboAttacks.attacks[golpe].colliderTag;
-        currentComboAttacks.attacks[golpe].collider.SetActive(true);
-        StartCoroutine(DesactivarCollisionGolpe(0.05f, golpe));
+            currentComboAttacks.attacks[golpe].collider.GetComponent<AttackCollider>().enemyHitAnim = currentComboAttacks.attacks[golpe].enemyHitAnim;
+            currentComboAttacks.attacks[golpe].collider.GetComponent<AttackCollider>().KnockbackY = currentComboAttacks.attacks[golpe].EnemyKnockBackForce.y;
+            currentComboAttacks.attacks[golpe].collider.GetComponent<AttackCollider>().enemyStandUp = currentComboAttacks.attacks[golpe].EnemyStandUp;
+
+            currentComboAttacks.attacks[golpe].collider.GetComponent<AttackCollider>().Knockback = currentComboAttacks.attacks[golpe].EnemyKnockBackForce.x;
+            currentComboAttacks.attacks[golpe].collider.GetComponent<AttackCollider>().SetFeedback(currentComboAttacks.attacks[golpe].enemyFeedback);
+            currentComboAttacks.attacks[golpe].collider.tag = currentComboAttacks.attacks[golpe].colliderTag;
+            currentComboAttacks.attacks[golpe].collider.SetActive(true);
+            StartCoroutine(DesactivarCollisionGolpe(0.05f, golpe));
+        }   
+
 
     }
     private IEnumerator DesactivarCollisionGolpe(float time, int golpe)
@@ -319,6 +336,7 @@ public class PlayerController : MonoBehaviour
 
             for(int i = 0; i <= currentComboAttacks.attacks[currentComboAttack].repeticionGolpes;i++)
             {
+                stopAttack = false;
                 StartCoroutine(DelayGolpe(currentComboAttacks.attacks[currentComboAttack].delayGolpe+(i* currentComboAttacks.attacks[currentComboAttack].delayRepeticionGolpes), currentComboAttack));
 
 
@@ -501,18 +519,34 @@ public class PlayerController : MonoBehaviour
                 switch (attacks)
                 {
                     case Attacks.GROUND:
-
+                        if (CheckIfDash())
+                        {
+                            dashDown = false;
+                            break;
+                        }
                         break;
                     case Attacks.AIR:
-
+                        if (CheckIfDash())
+                        {
+                            dashDown = true;
+                            break;
+                        }
 
                         break;
                     case Attacks.FALL:
-
+                        if (CheckIfDash())
+                        {
+                            dashDown = true;
+                            break;
+                        }
 
                         break;
                     case Attacks.RUN:
-
+                        if (CheckIfDash())
+                        {
+                            dashDown = false;
+                            break;
+                        }
                         break;
                 }
 
@@ -986,7 +1020,8 @@ public class PlayerController : MonoBehaviour
         }
         if (controller.GetDash())
         {
-            if(controller.LeftStickValue().magnitude < 0.2f)
+            stopAttack = true;
+            if (controller.LeftStickValue().magnitude < 0.2f)
             {
                 player.transform.GetChild(3).transform.localPosition += new Vector3(0, 0, 1).normalized;
                 dashDirection = new Vector2(0, -1);

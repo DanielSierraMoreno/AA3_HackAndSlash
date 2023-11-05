@@ -43,6 +43,10 @@ public class Enemy1 : MonoBehaviour
     float attackDelay;
     float actionsDelay;
     float attackTimer;
+
+    public AnimationCurve attack1;
+    public AnimationCurve attack2;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -111,6 +115,8 @@ public class Enemy1 : MonoBehaviour
 
     void ChangeToIdle()
     {
+        attackDelay = 0.25f;
+
         attackTimer = Time.time;
            GetDamage = true;
 
@@ -188,7 +194,6 @@ public class Enemy1 : MonoBehaviour
                 {
                     if ((Time.time - attackTimer) > attackDelay)
                     {
-                        attackDelay = Random.RandomRange(2, 5);
                         int attack = (int)Random.RandomRange(0, 10);
 
                         attackTimer = Time.time;
@@ -231,7 +236,7 @@ public class Enemy1 : MonoBehaviour
                         }
                         break;
                     case Fly.UP:
-                        rigidbody.AddForce(this.transform.up * 25 * flyCurve.Evaluate((Time.time - flyTimer)), ForceMode.Force);
+                        rigidbody.AddForce(this.transform.up * 1750 * flyCurve.Evaluate((Time.time - flyTimer))*Time.deltaTime, ForceMode.Force);
 
                         if ((Time.time - flyTimer) > 1.5f)
                         {
@@ -261,7 +266,7 @@ public class Enemy1 : MonoBehaviour
                         }
                         break;                      
                     case Fly.DOWN:
-                        rigidbody.AddForce(-this.transform.up * 25, ForceMode.Force);
+                        rigidbody.AddForce(-this.transform.up * 1750 * Time.deltaTime, ForceMode.Force);
 
                         RaycastHit rayhit;
 
@@ -292,6 +297,32 @@ public class Enemy1 : MonoBehaviour
                 }
                 break;
             case States.ATTACK:
+                //Vector3 look2 = new Vector3(player.transform.position.x, this.transform.position.y, player.transform.position.z);
+                //var targetRotation3 = Quaternion.LookRotation(look2 - this.transform.position);
+                //this.transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation3, 3 * Time.deltaTime);
+
+                switch(ataques)
+                {
+                    case Attack.ATTACK1:
+                        rigidbody.AddForce(this.transform.forward * 500 * attack1.Evaluate((Time.time - attackTimer) )* Time.deltaTime, ForceMode.Force);
+                        if((Time.time- attackTimer) > 0.75f)
+                        {
+                            ChangeToIdle();
+                            attackDelay = Random.RandomRange(2, 5);
+
+                        }
+
+                        break;
+                    case Attack.ATTACK2:
+                        rigidbody.AddForce(this.transform.forward * 500 * attack2.Evaluate((Time.time - attackTimer) )* Time.deltaTime, ForceMode.Force);
+                        if ((Time.time - attackTimer) > 2f)
+                        {
+                            ChangeToIdle();
+                            attackDelay = Random.RandomRange(2, 5);
+
+                        }
+                        break;
+                }
 
                 break;
             case States.DELAY:
@@ -423,6 +454,8 @@ public class Enemy1 : MonoBehaviour
         hitCount--;
         if(hitCount == 0)
         {
+            attackDelay = 0.5f;
+
             GetDamage = true;
             attackTimer = Time.time;
 
