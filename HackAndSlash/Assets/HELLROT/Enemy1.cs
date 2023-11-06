@@ -3,10 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.VFX;
 
 public class Enemy1 : MonoBehaviour
 {
     public DamageNumber numberPrefab;
+    
+
     enum States { MOVE, ATTACK, FLY, IDLE,DELAY, JUMP, HIT};
     enum Move { WALK, RUN};
     enum Fly {START,UP,AIR,DOWN,ATTACK};

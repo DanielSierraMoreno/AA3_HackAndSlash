@@ -4,6 +4,8 @@ using System.Security.Permissions;
 using UnityEngine;
 using UnityEngine.UI;
 using MoreMountains.Feedbacks;
+using UnityEngine.VFX;
+
 public class PlayerController : MonoBehaviour
 {
     enum States { MOVE, DASH, JUMP, ATTACK, IDLE, DELAYMOVE };
@@ -125,6 +127,10 @@ public class PlayerController : MonoBehaviour
     float landHeight;
 
     bool stopAttack;
+
+    public DoubleJumpVFXController doubleJumpVFX;
+    public LandingVFXController landVFX;
+    public SingleJumpVFXController singleJumpVFX;
     // Start is called before the first frame update
     void Start()
     {
@@ -209,6 +215,7 @@ public class PlayerController : MonoBehaviour
 
                         playerAnim.CrossFadeInFixedTime("LandAttack", 0.1f);
                         doubleJump = false;
+                        Debug.Log("Doouble Jump");
                         comboFinishedTime = Time.time;
                         attackFinished = true;
                         delayCombos = currentComboAttacks.attacks[currentComboAttack].delayFinal;
@@ -412,6 +419,7 @@ public class PlayerController : MonoBehaviour
 
             if (states != States.JUMP)
             {
+                singleJumpVFX.PlaySingleJumpVFX(this.transform.position);
                 timeJumping = Time.time;
                 fallStartTime = Time.time;
                 states = States.JUMP;
@@ -425,6 +433,7 @@ public class PlayerController : MonoBehaviour
             else if (!doubleJump)
             {
                 Move(1);
+                doubleJumpVFX.PlayDoubleJumpVFX(this.transform.position + new Vector3(0f,4f,0f));
                 doubleJump = true;
                 timeJumping = Time.time;
                 fallStartTime = Time.time;
@@ -702,6 +711,10 @@ public class PlayerController : MonoBehaviour
                     case Jump.LAND:
                         if ((Time.time - timeLanding) > 0.10f)
                         {
+                            //Debug.Log("Landed");
+                            //landVFX.transform.position = this.transform.position;
+                            //landVFX.Play();
+                            landVFX.PlayDustVFX(this.transform.position);
                             player.transform.GetChild(1).Rotate(new Vector3(0,1,0),-90);
                             playerAnim.CrossFadeInFixedTime("Idle", 0.2f);
                             this.transform.position = new Vector3(this.transform.position.x, landHeight+0.2f, this.transform.position.z);
@@ -730,10 +743,12 @@ public class PlayerController : MonoBehaviour
                 {
                     case Moves.WALK:
                         Move(walkSpeed);
-
+                        Debug.Log("Walking");
+                        //walkVFX.Play();
                         break;
                     case Moves.RUN:
                         Move(runSpeed);
+                        Debug.Log("Running");
                         break;
                     default:
                         Move(0);
@@ -878,6 +893,7 @@ public class PlayerController : MonoBehaviour
                     if (moves == Moves.RUN)
                     {
                         attacks = Attacks.RUN;
+
                         currentComboAttacks = GetAttacks(ComboAtaques.run2);
                         PlayAttack();
                     }
