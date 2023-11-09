@@ -369,13 +369,13 @@ MonoBehaviour:
   shakeOffsetFadeIn: {x: 0, y: 2.5}
   shakeFrequencyFadeIn: 4
   durationFadeOut: 0.3
-  enableOffsetFadeOut: 1
+  enableOffsetFadeOut: 0
   offsetFadeOut: {x: 0, y: -0.2}
-  enableScaleFadeOut: 1
+  enableScaleFadeOut: 0
   scaleFadeOut: {x: 0.8, y: 1.2}
-  enableCrossScaleFadeOut: 1
+  enableCrossScaleFadeOut: 0
   crossScaleFadeOut: {x: 1, y: 1.5}
-  enableShakeFadeOut: 1
+  enableShakeFadeOut: 0
   shakeOffsetFadeOut: {x: 0, y: 1.5}
   shakeFrequencyFadeOut: 4
   enableLerp: 0
@@ -396,7 +396,7 @@ MonoBehaviour:
     dragX: 0.1
     dragY: 1
     gravity: 3
-  enableShaking: 1
+  enableShaking: 0
   shakeSettings:
     offset: {x: 0.005, y: 0}
     frequency: 50
@@ -405,7 +405,7 @@ MonoBehaviour:
   followSettings:
     speed: 10
     drag: 0
-  enableStartRotation: 1
+  enableStartRotation: 0
   minRotation: -4
   maxRotation: 4
   rotationRandomFlip: 0

@@ -237,6 +237,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 155124, guid: 791db569cd9ee314599c14133789eb34, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 158462, guid: 791db569cd9ee314599c14133789eb34, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -458,6 +462,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 068f5f77c858ab944875ae45a632e8fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  numberPrefab: {fileID: 4976151793224397268, guid: d7ddc6e934e42e94ba1b474312ff4083,
+    type: 3}
   hitWhiteEffects:
   - {fileID: 1258725013165278, guid: f00872eb3daf45d4cb44ebbbf9d203b7, type: 3}
   - {fileID: 1416824176164296, guid: dc1397204bb5ee84895af2b49dac2d49, type: 3}
@@ -714,7 +720,7 @@ Rigidbody:
   m_GameObject: {fileID: 1779823068520320692}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 2
+  m_Drag: 5
   m_AngularDrag: 2
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -727,10 +733,10 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!136 &6512890036136770277
 CapsuleCollider:

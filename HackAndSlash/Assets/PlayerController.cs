@@ -78,7 +78,7 @@ public class PlayerController : MonoBehaviour
         public bool EnemyStandUp;
         public int repeticionGolpes;
         public float delayRepeticionGolpes;
-
+        
     }
     [System.Serializable]
     public class ListaAtaques
@@ -224,7 +224,7 @@ public class PlayerController : MonoBehaviour
                         currentComboAttack = -1;
                         moveDirSaved = new Vector3();
                         landHeight = hit.point.y;
-                        this.transform.position = new Vector3(this.transform.position.x, landHeight + 0.2f, this.transform.position.z);
+                        //this.transform.position = new Vector3(this.transform.position.x, landHeight + 0.2f, this.transform.position.z);
 
                         return true;
                     }
@@ -278,7 +278,15 @@ public class PlayerController : MonoBehaviour
     void ApplyGravity()
     {
         Vector3 gravity = new Vector3(0, this.gravity * (Time.time - fallStartTime), 0);
-        this.GetComponent<Rigidbody>().AddForce(gravity * Time.fixedDeltaTime, ForceMode.Force);
+
+        //if((landHeight <= 0 && ((this.transform.position.y-landHeight) >= 0) && Mathf.Abs(this.transform.position.y - landHeight) < (4.5f* (((Time.time - fallStartTime))))) || (landHeight > 0 && ((this.transform.position.y - landHeight) > 0) && Mathf.Abs(this.transform.position.y - landHeight) < (4.5f * (((Time.time - fallStartTime))))))
+        //{
+        //    this.transform.position = new Vector3(this.transform.position.x, landHeight+0.1f, this.transform.position.z);
+        //}
+        //else
+        //{
+            this.GetComponent<Rigidbody>().AddForce(gravity * Time.fixedDeltaTime, ForceMode.Force);
+        //}
 
     }
     void moveInAir(float vel)
@@ -372,7 +380,7 @@ public class PlayerController : MonoBehaviour
     {
         RaycastHit hit;
 
-        if (Physics.Raycast(transform.position, transform.TransformDirection(-this.transform.up), out hit, 20, 1 << 7))
+        if (Physics.Raycast(transform.position + new Vector3(0,0.1f,0), transform.TransformDirection(-this.transform.up), out hit, 20, 1 << 7))
         {
             if (hit.distance > distanceFloor)
             {
@@ -387,15 +395,16 @@ public class PlayerController : MonoBehaviour
             }
             else if (hit.distance <0)
             {
-                this.transform.position = new Vector3(this.transform.position.x, hit.point.y+0.2f, this.transform.position.z);
+                //this.transform.position = new Vector3(this.transform.position.x, hit.point.y+0.1f, this.transform.position.z);
                 doubleJump = false;
 
                 return CheckIfLand();
             }
             else
             {
-                this.transform.position = new Vector3(this.transform.position.x, hit.point.y + 0.2f, this.transform.position.z);
+                //this.transform.position = new Vector3(this.transform.position.x, hit.point.y + 0.1f, this.transform.position.z);
                 doubleJump = false;
+
                 return false;
             }
 
@@ -457,9 +466,10 @@ public class PlayerController : MonoBehaviour
 
         if (Physics.Raycast(transform.position, transform.TransformDirection(-this.transform.up), out hit, 20, 1 << 7))
         {
+                landHeight = hit.point.y;
+
             if ((hit.distance < 2 * ((gravity * (Time.time - fallStartTime)) / gravity) || hit.distance < 0.5f))
             {
-                landHeight = hit.point.y;
                 timeLanding = Time.time;
                 if (!playerAnim.GetCurrentAnimatorStateInfo(0).IsName("Land"))
                     playerAnim.CrossFadeInFixedTime("Land", 0.2f);
@@ -493,7 +503,7 @@ public class PlayerController : MonoBehaviour
                     break;
                 else if (attacks == Attacks.FALL && (Time.time - dealyAttackFall) >= 0.5f)
                 {
-                    this.transform.position = new Vector3(this.transform.position.x, landHeight + 0.2f, this.transform.position.z);
+                    //this.transform.position = new Vector3(this.transform.position.x, landHeight + 0.2f, this.transform.position.z);
 
                     attacks = Attacks.GROUND;
                     playerAnim.CrossFadeInFixedTime("Idle", 0.2f);
@@ -706,7 +716,7 @@ public class PlayerController : MonoBehaviour
                         if (CheckAtaques())
                             break;
                         if (CheckIfLand())
-                            break;
+w                            break;
                         break;
                     case Jump.LAND:
                         if ((Time.time - timeLanding) > 0.10f)
@@ -717,7 +727,7 @@ public class PlayerController : MonoBehaviour
                             landVFX.PlayDustVFX(this.transform.position);
                             player.transform.GetChild(1).Rotate(new Vector3(0,1,0),-90);
                             playerAnim.CrossFadeInFixedTime("Idle", 0.2f);
-                            this.transform.position = new Vector3(this.transform.position.x, landHeight+0.2f, this.transform.position.z);
+                            //this.transform.position = new Vector3(this.transform.position.x, landHeight+0.2f, this.transform.position.z);
                             //states = States.IDLE;
                             CheckIfReturnIdle();
                             CheckMove();
