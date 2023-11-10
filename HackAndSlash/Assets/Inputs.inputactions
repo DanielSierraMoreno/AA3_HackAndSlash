@@ -24,7 +24,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "R1Pressed",
+                    "name": "R2Pressed",
                     "type": "Button",
                     "id": "6724c050-5b32-4f9c-bf34-8e6405d13504",
                     "expectedControlType": "Button",
@@ -63,6 +63,15 @@
                     "name": "AtaquePesado",
                     "type": "Button",
                     "id": "00171d05-4276-462c-8aaf-3454e36b3962",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "L2",
+                    "type": "Button",
+                    "id": "504721f2-0674-4f01-86aa-9f7f052c0fce",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -187,7 +196,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "R1Pressed",
+                    "action": "R2Pressed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -198,7 +207,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "R1Pressed",
+                    "action": "R2Pressed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -287,6 +296,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "AtaquePesado",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1ef38dc9-3873-470a-8eea-7ca7c73ed667",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "L2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4041dbfe-833b-4d0a-ac93-0ed484746dc4",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "L2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

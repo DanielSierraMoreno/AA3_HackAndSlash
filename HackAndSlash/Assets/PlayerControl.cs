@@ -43,7 +43,7 @@ public class PlayerControl : MonoBehaviour
 
     public float delayIdleToMoveTime;
 
-    public enum ComboAtaques { combo1, combo2, combo3, combo4, air1, air2, run1, run2 };
+    public enum ComboAtaques { combo1, combo2, combo3, combo4, combo5, air1, air2, run1, run2 };
 
     public int currentScroll;
     [System.Serializable]
@@ -132,10 +132,13 @@ public class PlayerControl : MonoBehaviour
     public LandingVFXController landVFX;
     public SingleJumpVFXController singleJumpVFX;
 
+    public int dashConsecutivos;
+    public int dashCount;
 
     // Start is called before the first frame update
     void Start()
     {
+        dashCount = 0;
         attackFinished = false;
         controller = GameObject.FindAnyObjectByType<ControllerManager>().GetComponent<ControllerManager>();
         currentComboAttack = -1;
@@ -185,6 +188,7 @@ public class PlayerControl : MonoBehaviour
 
         if (currentComboAttacks.combo == ComboAtaques.air2)
         {
+
             if ((Time.time - attackStartTime) >= currentComboAttacks.attacks[currentComboAttack].ataque && attacks == Attacks.AIR)
             {
                 attacks = Attacks.FALL;
@@ -195,9 +199,9 @@ public class PlayerControl : MonoBehaviour
             {
                 RaycastHit hit;
 
-                if (Physics.Raycast(transform.position, transform.TransformDirection(-this.transform.up), out hit, 20, 1 << 7))
+                if (Physics.Raycast(transform.position + new Vector3(0, 0.2f, 0), transform.TransformDirection(-this.transform.up), out hit, 200, 1 << 7))
                 {
-                    if (hit.distance < 0.55)
+                    if (hit.distance < 0.5f)
                     {
                         playerAnim.speed = 1;
                         if (currentComboAttacks.attacks[currentComboAttack].effects != null)
@@ -230,6 +234,10 @@ public class PlayerControl : MonoBehaviour
                     }
 
                 }
+            }
+            if (CheckIfDash())
+            {
+                dashDown = true;
             }
             return true;
         }
@@ -293,7 +301,7 @@ public class PlayerControl : MonoBehaviour
     {
         RaycastHit hit;
 
-        if (Physics.Raycast(transform.position, transform.TransformDirection(this.transform.GetChild(0).forward), out hit, 20))
+        if (Physics.Raycast(transform.position, transform.TransformDirection(this.transform.GetChild(0).forward), out hit, 200))
         {
             if (hit.distance < 1)
             {
@@ -380,7 +388,7 @@ public class PlayerControl : MonoBehaviour
     {
         RaycastHit hit;
 
-        if (Physics.Raycast(transform.position + new Vector3(0, 0.1f, 0), transform.TransformDirection(-this.transform.up), out hit, 20, 1 << 7))
+        if (Physics.Raycast(transform.position + new Vector3(0, 0.1f, 0), transform.TransformDirection(-this.transform.up), out hit, 200, 1 << 7))
         {
             if (hit.distance > distanceFloor)
             {
@@ -464,7 +472,7 @@ public class PlayerControl : MonoBehaviour
     {
         RaycastHit hit;
 
-        if (Physics.Raycast(transform.position, transform.TransformDirection(-this.transform.up), out hit, 20, 1 << 7))
+        if (Physics.Raycast(transform.position, transform.TransformDirection(-this.transform.up), out hit, 200, 1 << 7))
         {
             landHeight = hit.point.y;
 
@@ -565,18 +573,17 @@ public class PlayerControl : MonoBehaviour
                         }
                         break;
                 }
-
-
                 break;
             case States.DASH:
                 this.GetComponent<Rigidbody>().drag = 15;
+                this.transform.GetChild(0).transform.localEulerAngles = new Vector3(0, this.transform.GetChild(0).transform.localEulerAngles.y, 0);
 
                 if (CheckAtaques())
                     break;
                 switch (dash)
                 {
                     case Dash.START:
-                        if ((Time.time - delayDash) > 0.20f)
+                        if ((Time.time - delayDash) > 0.05f)
                         {
                             playerAnim.speed = 1;
                             for (int i = 0; i < dashEffects.Length; i++)
@@ -617,7 +624,7 @@ public class PlayerControl : MonoBehaviour
                         }
                         break;
                     case Dash.DASH:
-                        if ((Time.time - delayDash) > 0.10f)
+                        if ((Time.time - delayDash) > 0.05f)
                         {
                             delayDash = Time.time;
 
@@ -625,16 +632,7 @@ public class PlayerControl : MonoBehaviour
 
                             playerAnim.CrossFadeInFixedTime("DashAparecer", 0.2f);
 
-                            for (int i = 0; i < dashEffects.Length; i++)
-                            {
-                                if (dashEffects[i].activeSelf == false)
-                                {
-                                    dashEffects[i].SetActive(true);
-                                    StartCoroutine(DashEffectDisable(2, i));
-                                    break;
-
-                                }
-                            }
+        
 
                         }
 
@@ -642,11 +640,11 @@ public class PlayerControl : MonoBehaviour
                         {
                             RaycastHit hit;
 
-                            if (Physics.Raycast(transform.position, transform.TransformDirection(-this.transform.up), out hit, 20, 1 << 7))
+                            if (Physics.Raycast(transform.position, transform.TransformDirection(-this.transform.up), out hit, 200, 1 << 7))
                             {
                                 if ((hit.distance > 0.5f))
                                 {
-                                    this.GetComponent<Rigidbody>().AddForce(-this.transform.up * 5000 * Time.fixedDeltaTime, ForceMode.Force);
+                                    this.GetComponent<Rigidbody>().AddForce(-this.transform.up * 15000 * Time.fixedDeltaTime, ForceMode.Force);
                                 }
                             }
                         }
@@ -658,8 +656,18 @@ public class PlayerControl : MonoBehaviour
 
                         break;
                     case Dash.END:
-                        if ((Time.time - delayDash) > 0.20f)
+                        if ((Time.time - delayDash) > 0.05f)
                         {
+                            for (int i = 0; i < dashEffects.Length; i++)
+                            {
+                                if (dashEffects[i].activeSelf == false)
+                                {
+                                    dashEffects[i].SetActive(true);
+                                    StartCoroutine(DashEffectDisable(2, i));
+                                    break;
+
+                                }
+                            }
                             delayDash = Time.time;
                             moveDirSaved = new Vector3();
 
@@ -810,6 +818,15 @@ public class PlayerControl : MonoBehaviour
             
             if (controller.ataqueCuadrado)
             {
+                if (enemieTarget.GetEnemie(this.transform.position) != Vector3.zero)
+                {
+                    Vector3 pos = (this.transform.position - enemieTarget.GetEnemie(this.transform.position)).normalized;
+                    pos = enemieTarget.GetEnemie(this.transform.position) + (pos * 2);
+                    this.transform.position = pos;
+                    player.transform.LookAt(enemieTarget.GetEnemie(this.transform.position));
+
+                }
+
 
                 if (states == States.JUMP)
                 {
@@ -887,6 +904,14 @@ public class PlayerControl : MonoBehaviour
 
             if ((controller.ataqueTriangulo))
             {
+                if (enemieTarget.GetEnemie(this.transform.position) != Vector3.zero)
+                {
+                    Vector3 pos = (this.transform.position - enemieTarget.GetEnemie(this.transform.position)).normalized;
+                    pos = enemieTarget.GetEnemie(this.transform.position) + (pos * 2);
+                    this.transform.position = pos;
+                    player.transform.LookAt(enemieTarget.GetEnemie(this.transform.position));
+
+                }
 
                 if (states == States.JUMP)
                 {
@@ -963,8 +988,17 @@ public class PlayerControl : MonoBehaviour
             }
 
 
-            if (controller.ataqueCuadradoCargado && states != States.JUMP)
+            if (controller.ataqueCuadradoCargadoL2 && states != States.JUMP)
             {
+                if (enemieTarget.GetEnemie(this.transform.position) != Vector3.zero)
+                {
+                    Vector3 pos = (this.transform.position - enemieTarget.GetEnemie(this.transform.position)).normalized;
+                    pos = enemieTarget.GetEnemie(this.transform.position) + (pos * 2);
+                    this.transform.position = pos;
+                    player.transform.LookAt(enemieTarget.GetEnemie(this.transform.position));
+
+                }
+
                 if ((Time.time - attackStartTime) >= delay + 0.1f)
                 {
                     currentComboAttack = -1;
@@ -984,8 +1018,47 @@ public class PlayerControl : MonoBehaviour
                 return true;
             }
 
+            if (controller.ataqueCuadradoCargado && states != States.JUMP)
+            {
+                if (enemieTarget.GetEnemie(this.transform.position) != Vector3.zero)
+                {
+                    Vector3 pos = (this.transform.position - enemieTarget.GetEnemie(this.transform.position)).normalized;
+                    pos = enemieTarget.GetEnemie(this.transform.position) + (pos * 2);
+                    this.transform.position = pos;
+                    player.transform.LookAt(enemieTarget.GetEnemie(this.transform.position));
+
+                }
+
+                if ((Time.time - attackStartTime) >= delay + 0.1f)
+                {
+                    currentComboAttack = -1;
+                }
+                else if (GetAttacks(ComboAtaques.combo2).attacks.Length - 1 <= currentComboAttack)
+                {
+                    currentComboAttack = GetAttacks(ComboAtaques.combo2).attacks.Length - 2;
+                }
+                if (enemieTarget.GetEnemie(this.transform.position) != Vector3.zero)
+                    player.transform.LookAt(enemieTarget.GetEnemie(this.transform.position));
+                moveDirSaved = new Vector3();
+                states = States.ATTACK;
+                attacks = Attacks.GROUND;
+                currentComboAttacks = GetAttacks(ComboAtaques.combo5);
+                PlayAttack();
+                controller.ResetBotonesAtaques();
+                return true;
+            }
+
             if (controller.ataqueTrianguloCargado && states != States.JUMP)
             {
+                if (enemieTarget.GetEnemie(this.transform.position) != Vector3.zero)
+                {
+                    Vector3 pos = (this.transform.position - enemieTarget.GetEnemie(this.transform.position)).normalized;
+                    pos = enemieTarget.GetEnemie(this.transform.position) + (pos * 2);
+                    this.transform.position = pos;
+                    player.transform.LookAt(enemieTarget.GetEnemie(this.transform.position));
+
+                }
+
                 if ((Time.time - attackStartTime) >= delay + 0.1f)
                 {
                     currentComboAttack = -1;
@@ -1088,12 +1161,49 @@ public class PlayerControl : MonoBehaviour
 
     bool CheckIfDash()
     {
-        if ((Time.time - delayDash) < delayDashes)
+        
+        if (controller.dash)
         {
-            return false;
-        }
-        if (controller.GetDash())
-        {
+            controller.ResetBotonesAtaques();
+
+            if (dashCount < dashConsecutivos)
+            {
+                if ((Time.time - delayDash) > 0.1f)
+                {
+                    dashCount = 0;
+                }
+            }
+            else
+            {
+                if ((Time.time - delayDash) < delayDashes)
+                {
+
+                    return false;
+                }
+                else
+                {
+                    dashCount = 0;
+
+                }
+
+            }
+            if (dashConsecutivos <= dashCount)
+            {
+                if ((Time.time - delayDash) < delayDashes)
+                {
+                    dashCount = 0;
+
+                    return false;
+                }
+                else
+                {
+                    dashCount = 0;
+                }
+            }
+
+            playerAnim.speed = 2f;
+
+            dashCount++;
             stopAttack = true;
             if (controller.LeftStickValue().magnitude < 0.2f)
             {

@@ -16,12 +16,15 @@ public class ControllerManager : MonoBehaviour
     public bool ataqueCuadradoCargado;
     public bool ataqueTriangulo;
     public bool ataqueTrianguloCargado;
+    public bool ataqueCuadradoCargadoL2;
+    public bool ataqueTrianguloCargadoL2;
 
     bool dejarMantenerCuadrado;
     bool dejarMantenerTriangulo;
 
     bool jump;
     bool canJump;
+    public bool dash;
 
     public bool MouseControl;
     Vector2 leftStick;
@@ -31,17 +34,21 @@ public class ControllerManager : MonoBehaviour
     InputAction.CallbackContext Box;
     InputAction.CallbackContext Triangle;
     InputAction.CallbackContext R2;
+    InputAction.CallbackContext L2;
+
     // Start is called before the first frame update
     void Start()
     {
         leftStick = new Vector2();
         rightStick = new Vector2();
 
+        dash = false;
         ataqueCuadrado = false;
         ataqueTriangulo = false;
         ataqueCuadradoCargado = false;
         ataqueTrianguloCargado = false;
-
+        ataqueTrianguloCargadoL2 = false;
+        ataqueCuadradoCargadoL2 = false;
         jump = false;
         canJump = true;
         dejarMantenerCuadrado = false;
@@ -67,6 +74,10 @@ public class ControllerManager : MonoBehaviour
     public void GetR2(InputAction.CallbackContext context)
     {
         R2 = context;
+    }
+    public void GetL2(InputAction.CallbackContext context)
+    {
+        L2 = context;
     }
     public void GetX(InputAction.CallbackContext context)
     {
@@ -115,9 +126,12 @@ public class ControllerManager : MonoBehaviour
     public void ResetBotonesAtaques()
     {
         ataqueCuadrado = false;
-        ataqueCuadradoCargado = false;
         ataqueTriangulo = false;
+        ataqueCuadradoCargado = false;
         ataqueTrianguloCargado = false;
+        ataqueTrianguloCargadoL2 = false;
+        ataqueCuadradoCargadoL2 = false;
+        dash = false;
     }
 
     public bool CheckIfJump()
@@ -158,20 +172,33 @@ public class ControllerManager : MonoBehaviour
 
             if (Box.action.WasReleasedThisFrame() && (Time.time - delayCuadrado) <= 0.25f)
             {
+                ResetBotonesAtaques();
                 ataqueCuadrado = true;
-
-                ataqueTriangulo = false;
-                ataqueCuadradoCargado = false;
-                ataqueTrianguloCargado = false;
             }
             if (Box.action.IsPressed() && (Time.time - delayCuadrado) > 0.25f && cuadradoHold)
             {
-                ataqueCuadradoCargado = true;
+                ResetBotonesAtaques();
+
+                if (L2.action != null)
+                {
+                    if(L2.action.IsPressed())
+                    {
+                        ataqueCuadradoCargadoL2 = true;
+
+                    }
+                    else
+                    {
+                        ataqueCuadradoCargado = true;
+
+                    }
+                }
+                else
+                {
+                    ataqueCuadradoCargado = true;
+
+                }
                 cuadradoHold = false;
 
-                ataqueCuadrado = false;
-                ataqueTriangulo = false;
-                ataqueTrianguloCargado = false;
             }
         }
         if (Triangle.action != null)
@@ -184,25 +211,49 @@ public class ControllerManager : MonoBehaviour
             }
             if (Triangle.action.WasReleasedThisFrame() && (Time.time - delayTriangulo) <= 0.25f)
             {
+                ResetBotonesAtaques();
+
                 ataqueTriangulo = true;
 
-                ataqueCuadrado = false;
-                ataqueCuadradoCargado = false;
-                ataqueTrianguloCargado = false;
+
             }
 
             if (Triangle.action.IsPressed() && (Time.time - delayTriangulo) > 0.25f && trianguloHold)
             {
-                ataqueTrianguloCargado = true;
-                trianguloHold = false;
+                ResetBotonesAtaques();
 
-                ataqueCuadrado = false;
-                ataqueTriangulo = false;
-                ataqueCuadradoCargado = false;
+                trianguloHold = false;
+                if (L2.action != null)
+                {
+                    if (L2.action.IsPressed())
+                    {
+                        ataqueTrianguloCargadoL2 = true;
+
+                    }
+                    else
+                    {
+                        ataqueTrianguloCargado = true;
+
+                    }
+                }
+                else
+                {
+                    ataqueTrianguloCargado = true;
+
+                }
+
             }
         }
 
+        if (O.action != null)
+        {
+            if (O.action.WasPressedThisFrame())
+            {
+                ResetBotonesAtaques();
 
+                dash = true;
+            }
+        }
 
 
 
