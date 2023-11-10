@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using MoreMountains.Feedbacks;
 using UnityEngine.VFX;
 
-public class PlayerController : MonoBehaviour
+public class PlayerControl : MonoBehaviour
 {
     enum States { MOVE, DASH, JUMP, ATTACK, IDLE, DELAYMOVE };
 
@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
 
     enum Moves { WALK, RUN, IDLE };
 
-    enum Dash { START,DASH, DOUBLEDASH, AIRDASH,END };
+    enum Dash { START, DASH, DOUBLEDASH, AIRDASH, END };
 
     enum Jump { JUMP, FALL, LAND };
 
@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
 
     public float delayIdleToMoveTime;
 
-    public enum ComboAtaques { combo1, combo2, combo3, combo4, air1, air2, run1,run2 };
+    public enum ComboAtaques { combo1, combo2, combo3, combo4, air1, air2, run1, run2 };
 
     public int currentScroll;
     [System.Serializable]
@@ -78,7 +78,7 @@ public class PlayerController : MonoBehaviour
         public bool EnemyStandUp;
         public int repeticionGolpes;
         public float delayRepeticionGolpes;
-        
+
     }
     [System.Serializable]
     public class ListaAtaques
@@ -131,11 +131,11 @@ public class PlayerController : MonoBehaviour
     public DoubleJumpVFXController doubleJumpVFX;
     public LandingVFXController landVFX;
     public SingleJumpVFXController singleJumpVFX;
+
+
     // Start is called before the first frame update
     void Start()
     {
-
-
         attackFinished = false;
         controller = GameObject.FindAnyObjectByType<ControllerManager>().GetComponent<ControllerManager>();
         currentComboAttack = -1;
@@ -250,7 +250,7 @@ public class PlayerController : MonoBehaviour
             if (currentComboAttacks.combo != ComboAtaques.air1 && currentComboAttacks.combo != ComboAtaques.air2 && currentComboAttacks.combo != ComboAtaques.combo2 && currentComboAttacks.combo != ComboAtaques.combo4)
             {
                 CheckIfReturnIdle();
-                CheckIfStartMove();
+                CheckMove();
             }
             else
             {
@@ -285,7 +285,7 @@ public class PlayerController : MonoBehaviour
         //}
         //else
         //{
-            this.GetComponent<Rigidbody>().AddForce(gravity * Time.fixedDeltaTime, ForceMode.Force);
+        this.GetComponent<Rigidbody>().AddForce(gravity * Time.fixedDeltaTime, ForceMode.Force);
         //}
 
     }
@@ -295,7 +295,7 @@ public class PlayerController : MonoBehaviour
 
         if (Physics.Raycast(transform.position, transform.TransformDirection(this.transform.GetChild(0).forward), out hit, 20))
         {
-            if(hit.distance < 1)
+            if (hit.distance < 1)
             {
                 return;
             }
@@ -303,12 +303,12 @@ public class PlayerController : MonoBehaviour
             // Smoothly rotate towards the target point.
 
 
-        }                
-                    player.transform.LookAt(player.transform.position + moveDirSaved);
-                if (moves == Moves.IDLE)
-                    this.GetComponent<Rigidbody>().AddForce(moveDirSaved * 0 * Time.deltaTime, ForceMode.Force);
-                else
-                    this.GetComponent<Rigidbody>().AddForce(moveDirSaved * vel * Time.deltaTime, ForceMode.Force);
+        }
+        player.transform.LookAt(player.transform.position + moveDirSaved);
+        if (moves == Moves.IDLE)
+            this.GetComponent<Rigidbody>().AddForce(moveDirSaved * 0 * Time.deltaTime, ForceMode.Force);
+        else
+            this.GetComponent<Rigidbody>().AddForce(moveDirSaved * vel * Time.deltaTime, ForceMode.Force);
     }
 
     private IEnumerator DelayGolpe(float time, int golpe)
@@ -330,7 +330,7 @@ public class PlayerController : MonoBehaviour
             currentComboAttacks.attacks[golpe].collider.tag = currentComboAttacks.attacks[golpe].colliderTag;
             currentComboAttacks.attacks[golpe].collider.SetActive(true);
             StartCoroutine(DesactivarCollisionGolpe(0.05f, golpe));
-        }   
+        }
 
 
     }
@@ -349,10 +349,10 @@ public class PlayerController : MonoBehaviour
         if (currentComboAttacks.attacks[currentComboAttack].collider != null && currentComboAttacks.combo != ComboAtaques.air2)
         {
 
-            for(int i = 0; i <= currentComboAttacks.attacks[currentComboAttack].repeticionGolpes;i++)
+            for (int i = 0; i <= currentComboAttacks.attacks[currentComboAttack].repeticionGolpes; i++)
             {
                 stopAttack = false;
-                StartCoroutine(DelayGolpe(currentComboAttacks.attacks[currentComboAttack].delayGolpe+(i* currentComboAttacks.attacks[currentComboAttack].delayRepeticionGolpes), currentComboAttack));
+                StartCoroutine(DelayGolpe(currentComboAttacks.attacks[currentComboAttack].delayGolpe + (i * currentComboAttacks.attacks[currentComboAttack].delayRepeticionGolpes), currentComboAttack));
 
 
             }
@@ -380,7 +380,7 @@ public class PlayerController : MonoBehaviour
     {
         RaycastHit hit;
 
-        if (Physics.Raycast(transform.position + new Vector3(0,0.1f,0), transform.TransformDirection(-this.transform.up), out hit, 20, 1 << 7))
+        if (Physics.Raycast(transform.position + new Vector3(0, 0.1f, 0), transform.TransformDirection(-this.transform.up), out hit, 20, 1 << 7))
         {
             if (hit.distance > distanceFloor)
             {
@@ -393,7 +393,7 @@ public class PlayerController : MonoBehaviour
                 return true;
 
             }
-            else if (hit.distance <0)
+            else if (hit.distance < 0)
             {
                 //this.transform.position = new Vector3(this.transform.position.x, hit.point.y+0.1f, this.transform.position.z);
                 doubleJump = false;
@@ -442,7 +442,7 @@ public class PlayerController : MonoBehaviour
             else if (!doubleJump)
             {
                 Move(1);
-                doubleJumpVFX.PlayDoubleJumpVFX(this.transform.position + new Vector3(0f,4f,0f));
+                doubleJumpVFX.PlayDoubleJumpVFX(this.transform.position + new Vector3(0f, 4f, 0f));
                 doubleJump = true;
                 timeJumping = Time.time;
                 fallStartTime = Time.time;
@@ -466,7 +466,7 @@ public class PlayerController : MonoBehaviour
 
         if (Physics.Raycast(transform.position, transform.TransformDirection(-this.transform.up), out hit, 20, 1 << 7))
         {
-                landHeight = hit.point.y;
+            landHeight = hit.point.y;
 
             if ((hit.distance < 2 * ((gravity * (Time.time - fallStartTime)) / gravity) || hit.distance < 0.5f))
             {
@@ -498,7 +498,7 @@ public class PlayerController : MonoBehaviour
         switch (states)
         {
             case States.IDLE:
-                 var a = this.transform.position;
+                var a = this.transform.position;
                 if (attacks == Attacks.FALL && (Time.time - dealyAttackFall) < 0.5f)
                     break;
                 else if (attacks == Attacks.FALL && (Time.time - dealyAttackFall) >= 0.5f)
@@ -529,10 +529,7 @@ public class PlayerController : MonoBehaviour
                 CheckNextAttack();
                 AttackMovement();
 
-                if (controller.ataqueCuadrado && (currentComboAttacks.combo == ComboAtaques.combo2|| currentComboAttacks.combo == ComboAtaques.combo4))
-                    cuadrado = true;
-                if (controller.ataqueTriangulo && (currentComboAttacks.combo == ComboAtaques.combo2|| currentComboAttacks.combo == ComboAtaques.combo4))
-                    triangulo = true;
+
                 if (CheckIfNextAttack())
                     break;
                 switch (attacks)
@@ -576,36 +573,36 @@ public class PlayerController : MonoBehaviour
 
                 if (CheckAtaques())
                     break;
-                switch(dash)
+                switch (dash)
                 {
                     case Dash.START:
-                        if((Time.time-delayDash) >0.20f)
+                        if ((Time.time - delayDash) > 0.20f)
                         {
                             playerAnim.speed = 1;
-                            for(int i =0; i < dashEffects.Length;i++)
+                            for (int i = 0; i < dashEffects.Length; i++)
                             {
-                                if(dashEffects[i].activeSelf == false)
+                                if (dashEffects[i].activeSelf == false)
                                 {
                                     dashEffects[i].SetActive(true);
-                                    StartCoroutine(DashEffectDisable(2,i));
+                                    StartCoroutine(DashEffectDisable(2, i));
                                     break;
                                 }
                             }
 
 
 
-                            if(dashDirection == new Vector2(0,-1))
+                            if (dashDirection == new Vector2(0, -1))
                             {
                                 player.transform.GetChild(3).transform.localPosition += new Vector3(dashDirection.x, 0, dashDirection.y).normalized;
                                 Vector3 dir = this.transform.position - player.transform.GetChild(3).transform.position;
 
-                                this.GetComponent<Rigidbody>().AddForce(dir * dashSpeed*Time.fixedDeltaTime, ForceMode.Impulse);
+                                this.GetComponent<Rigidbody>().AddForce(dir * dashSpeed * Time.fixedDeltaTime, ForceMode.Impulse);
 
                                 player.transform.GetChild(3).transform.localPosition = new Vector3();
                             }
                             else
                             {
-                               movementController.transform.localPosition -= new Vector3(dashDirection.x, 0, dashDirection.y).normalized;
+                                movementController.transform.localPosition -= new Vector3(dashDirection.x, 0, dashDirection.y).normalized;
                                 Vector3 dir = this.transform.position - movementController.transform.position;
                                 this.GetComponent<Rigidbody>().AddForce(dir * dashSpeed * Time.fixedDeltaTime, ForceMode.Impulse);
 
@@ -641,7 +638,7 @@ public class PlayerController : MonoBehaviour
 
                         }
 
-                        if(dashDown)
+                        if (dashDown)
                         {
                             RaycastHit hit;
 
@@ -664,7 +661,7 @@ public class PlayerController : MonoBehaviour
                         if ((Time.time - delayDash) > 0.20f)
                         {
                             delayDash = Time.time;
-                               moveDirSaved = new Vector3();
+                            moveDirSaved = new Vector3();
 
                             if (CheckIfIsFalling())
                                 break;
@@ -679,7 +676,7 @@ public class PlayerController : MonoBehaviour
 
                 break;
             case States.JUMP:
-                 ApplyGravity();
+                ApplyGravity();
                 this.GetComponent<Rigidbody>().drag = 5;
                 if (CheckIfDash())
                 {
@@ -725,7 +722,7 @@ public class PlayerController : MonoBehaviour
                             //landVFX.transform.position = this.transform.position;
                             //landVFX.Play();
                             landVFX.PlayDustVFX(this.transform.position);
-                            player.transform.GetChild(1).Rotate(new Vector3(0,1,0),-90);
+                            player.transform.GetChild(1).Rotate(new Vector3(0, 1, 0), -90);
                             playerAnim.CrossFadeInFixedTime("Idle", 0.2f);
                             //this.transform.position = new Vector3(this.transform.position.x, landHeight+0.2f, this.transform.position.z);
                             //states = States.IDLE;
@@ -792,11 +789,7 @@ public class PlayerController : MonoBehaviour
     {
         if (attackFinished && (Time.time - comboFinishedTime) >= delayCombos)
         {
-            if (delayCombos != 0)
-            {
-                cuadrado = false;
-                triangulo = false;
-            }
+            controller.ResetBotonesAtaques();
 
 
             attackFinished = false;
@@ -811,38 +804,23 @@ public class PlayerController : MonoBehaviour
             delay = currentComboAttacks.attacks[currentComboAttack].delay;
 
         }
+
         if ((Time.time - attackStartTime) >= delay)
         {
-            currentComboAttack = -1;
-            if (cuadrado)
-            {
-                cuadrado = false;
-                moveDirSaved = new Vector3();
-                states = States.ATTACK;
-
-                attacks = Attacks.AIR;
-                currentComboAttacks = GetAttacks(ComboAtaques.air1);
-                PlayAttack();
-                return true;
-
-            }
-            if (triangulo)
-            {
-                triangulo = false;
-                states = States.ATTACK;
-
-                attacks = Attacks.AIR;
-                currentComboAttacks = GetAttacks(ComboAtaques.air2);
-                PlayAttack();
-                return true;
-
-            }
-
+            
             if (controller.ataqueCuadrado)
             {
-                cuadrado = false;
+
                 if (states == States.JUMP)
                 {
+                    if ((Time.time - attackStartTime) >= delay + 0.1f)
+                    {
+                        currentComboAttack = -1;
+                    }
+                    else if(GetAttacks(ComboAtaques.air1).attacks.Length-1 <= currentComboAttack)
+                    {
+                        currentComboAttack = GetAttacks(ComboAtaques.air1).attacks.Length - 1;
+                    }
                     moveDirSaved = new Vector3();
                     attacks = Attacks.AIR;
                     currentComboAttacks = GetAttacks(ComboAtaques.air1);
@@ -854,7 +832,14 @@ public class PlayerController : MonoBehaviour
                         player.transform.LookAt(enemieTarget.GetEnemie(this.transform.position));
                     if (moves == Moves.RUN)
                     {
-    
+                        if ((Time.time - attackStartTime) >= delay+0.1f)
+                        {
+                            currentComboAttack = -1;
+                        }
+                        else if (GetAttacks(ComboAtaques.run1).attacks.Length-1 <= currentComboAttack)
+                        {
+                            currentComboAttack = GetAttacks(ComboAtaques.run1).attacks.Length - 1;
+                        }
 
                         attacks = Attacks.RUN;
                         currentComboAttacks = GetAttacks(ComboAtaques.run1);
@@ -862,7 +847,14 @@ public class PlayerController : MonoBehaviour
                     }
                     else
                     {
-
+                        if ((Time.time - attackStartTime) >= delay + 0.1f)
+                        {
+                            currentComboAttack = -1;
+                        }
+                        else if (GetAttacks(ComboAtaques.combo1).attacks.Length-1 <= currentComboAttack)
+                        {
+                            currentComboAttack = GetAttacks(ComboAtaques.combo1).attacks.Length - 1;
+                        }
                         attacks = Attacks.GROUND;
                         currentComboAttacks = GetAttacks(ComboAtaques.combo1);
                         PlayAttack();
@@ -871,6 +863,15 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (states == States.IDLE)
                 {
+                    if ((Time.time - attackStartTime) >= delay + 0.1f)
+                    {
+                        currentComboAttack = -1;
+                    }
+                    else if (GetAttacks(ComboAtaques.combo1).attacks.Length-1 <= currentComboAttack)
+                    {
+                        currentComboAttack = GetAttacks(ComboAtaques.combo1).attacks.Length - 1;
+                    }
+
                     if (enemieTarget.GetEnemie(this.transform.position) != Vector3.zero)
                         player.transform.LookAt(enemieTarget.GetEnemie(this.transform.position));
                     attacks = Attacks.GROUND;
@@ -886,10 +887,17 @@ public class PlayerController : MonoBehaviour
 
             if ((controller.ataqueTriangulo))
             {
-                triangulo = false;
 
                 if (states == States.JUMP)
                 {
+                    if ((Time.time - attackStartTime) >= delay + 0.1f)
+                    {
+                        currentComboAttack = -1;
+                    }
+                    else if (GetAttacks(ComboAtaques.air2).attacks.Length-1 <= currentComboAttack)
+                    {
+                        currentComboAttack = GetAttacks(ComboAtaques.air2).attacks.Length - 2;
+                    }
                     moveDirSaved = new Vector3();
 
                     attacks = Attacks.AIR;
@@ -902,6 +910,14 @@ public class PlayerController : MonoBehaviour
                         player.transform.LookAt(enemieTarget.GetEnemie(this.transform.position));
                     if (moves == Moves.RUN)
                     {
+                        if ((Time.time - attackStartTime) >= delay + 0.1f)
+                        {
+                            currentComboAttack = -1;
+                        }
+                        else if (GetAttacks(ComboAtaques.run2).attacks.Length-1 <= currentComboAttack)
+                        {
+                            currentComboAttack = GetAttacks(ComboAtaques.run2).attacks.Length - 1;
+                        }
                         attacks = Attacks.RUN;
 
                         currentComboAttacks = GetAttacks(ComboAtaques.run2);
@@ -909,6 +925,14 @@ public class PlayerController : MonoBehaviour
                     }
                     else
                     {
+                        if ((Time.time - attackStartTime) >= delay + 0.1f)
+                        {
+                            currentComboAttack = -1;
+                        }
+                        else if (GetAttacks(ComboAtaques.combo3).attacks.Length-1 <= currentComboAttack)
+                        {
+                            currentComboAttack = GetAttacks(ComboAtaques.combo3).attacks.Length - 1;
+                        }
                         attacks = Attacks.GROUND;
                         currentComboAttacks = GetAttacks(ComboAtaques.combo3);
                         PlayAttack();
@@ -917,6 +941,14 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (states == States.IDLE)
                 {
+                    if ((Time.time - attackStartTime) >= delay + 0.1f)
+                    {
+                        currentComboAttack = -1;
+                    }
+                    else if (GetAttacks(ComboAtaques.combo3).attacks.Length-1 <= currentComboAttack)
+                    {
+                        currentComboAttack = GetAttacks(ComboAtaques.combo3).attacks.Length - 1;
+                    }
                     if (enemieTarget.GetEnemie(this.transform.position) != Vector3.zero)
                         player.transform.LookAt(enemieTarget.GetEnemie(this.transform.position));
                     attacks = Attacks.GROUND;
@@ -933,6 +965,14 @@ public class PlayerController : MonoBehaviour
 
             if (controller.ataqueCuadradoCargado && states != States.JUMP)
             {
+                if ((Time.time - attackStartTime) >= delay + 0.1f)
+                {
+                    currentComboAttack = -1;
+                }
+                else if (GetAttacks(ComboAtaques.combo2).attacks.Length-1 <= currentComboAttack)
+                {
+                    currentComboAttack = GetAttacks(ComboAtaques.combo2).attacks.Length - 2;
+                }
                 if (enemieTarget.GetEnemie(this.transform.position) != Vector3.zero)
                     player.transform.LookAt(enemieTarget.GetEnemie(this.transform.position));
                 moveDirSaved = new Vector3();
@@ -946,6 +986,14 @@ public class PlayerController : MonoBehaviour
 
             if (controller.ataqueTrianguloCargado && states != States.JUMP)
             {
+                if ((Time.time - attackStartTime) >= delay + 0.1f)
+                {
+                    currentComboAttack = -1;
+                }
+                else if (GetAttacks(ComboAtaques.combo4).attacks.Length-1 <= currentComboAttack)
+                {
+                    currentComboAttack = GetAttacks(ComboAtaques.combo4).attacks.Length - 2;
+                }
 
                 if (enemieTarget.GetEnemie(this.transform.position) != Vector3.zero)
                     player.transform.LookAt(enemieTarget.GetEnemie(this.transform.position));
@@ -959,34 +1007,34 @@ public class PlayerController : MonoBehaviour
                 return true;
             }
         }
-        else
-        {
-            if (currentComboAttacks.attacks[currentComboAttack].nextAttack)
-            {
-                if (enemieTarget.GetEnemie(this.transform.position) != Vector3.zero)
-                    player.transform.LookAt(enemieTarget.GetEnemie(this.transform.position));
-                states = States.ATTACK;
-                currentComboAttacks.attacks[currentComboAttack].nextAttack = false;
-                PlayAttack();
-                return true;
-            }
+        //else
+        //{
+        //    if (currentComboAttacks.attacks[currentComboAttack].nextAttack)
+        //    {
+        //        if (enemieTarget.GetEnemie(this.transform.position) != Vector3.zero)
+        //            player.transform.LookAt(enemieTarget.GetEnemie(this.transform.position));
+        //        states = States.ATTACK;
+        //        currentComboAttacks.attacks[currentComboAttack].nextAttack = false;
+        //        PlayAttack();
+        //        return true;
+        //    }
 
-            if (controller.ataqueTriangulo && (GetCurrentAttackCombo() == ComboAtaques.combo3 || GetCurrentAttackCombo() == ComboAtaques.combo4 || GetCurrentAttackCombo() == ComboAtaques.air2 || GetCurrentAttackCombo() == ComboAtaques.run2))
-            {
-                states = States.ATTACK;
+        //    if (controller.ataqueTriangulo && (GetCurrentAttackCombo() == ComboAtaques.combo3 || GetCurrentAttackCombo() == ComboAtaques.combo4 || GetCurrentAttackCombo() == ComboAtaques.air2 || GetCurrentAttackCombo() == ComboAtaques.run2))
+        //    {
+        //        states = States.ATTACK;
 
-                PlayAttack();
-                return true;
+        //        PlayAttack();
+        //        return true;
 
-            }
-            if (controller.ataqueCuadrado && (GetCurrentAttackCombo() == ComboAtaques.combo1 || GetCurrentAttackCombo() == ComboAtaques.combo2 || GetCurrentAttackCombo() == ComboAtaques.air1 || GetCurrentAttackCombo() == ComboAtaques.run1))
-            {
-                states = States.ATTACK;
+        //    }
+        //    if (controller.ataqueCuadrado && (GetCurrentAttackCombo() == ComboAtaques.combo1 || GetCurrentAttackCombo() == ComboAtaques.combo2 || GetCurrentAttackCombo() == ComboAtaques.air1 || GetCurrentAttackCombo() == ComboAtaques.run1))
+        //    {
+        //        states = States.ATTACK;
 
-                PlayAttack();
-                return true;
-            }
-        }
+        //        PlayAttack();
+        //        return true;
+        //    }
+        //}
         return false;
 
     }
@@ -1040,7 +1088,7 @@ public class PlayerController : MonoBehaviour
 
     bool CheckIfDash()
     {
-        if((Time.time- delayDash) < delayDashes)
+        if ((Time.time - delayDash) < delayDashes)
         {
             return false;
         }
@@ -1060,7 +1108,7 @@ public class PlayerController : MonoBehaviour
                 movementController.transform.localPosition += new Vector3(controller.LeftStickValue().x, 0, controller.LeftStickValue().y).normalized;
                 player.transform.LookAt(movementController.transform.position);
                 dashDirection = new Vector2(controller.LeftStickValue().x, controller.LeftStickValue().y);
-          
+
                 movementController.transform.localPosition = new Vector3();
             }
             player.transform.GetChild(1).Rotate(new Vector3(0, 1, 0), 90);
@@ -1068,6 +1116,7 @@ public class PlayerController : MonoBehaviour
 
             // Smoothly rotate towards the target point.
 
+            controller.ResetBotonesAtaques();
 
             delayDash = Time.time;
             playerAnim.CrossFadeInFixedTime("Dash", 0.1f);

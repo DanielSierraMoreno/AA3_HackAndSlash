@@ -37,6 +37,11 @@ public class ControllerManager : MonoBehaviour
         leftStick = new Vector2();
         rightStick = new Vector2();
 
+        ataqueCuadrado = false;
+        ataqueTriangulo = false;
+        ataqueCuadradoCargado = false;
+        ataqueTrianguloCargado = false;
+
         jump = false;
         canJump = true;
         dejarMantenerCuadrado = false;
@@ -138,10 +143,10 @@ public class ControllerManager : MonoBehaviour
 
     public void ControlesAtaques()
     {
-        ataqueCuadrado = false;
-        ataqueTriangulo = false;
-        ataqueCuadradoCargado = false;
-        ataqueTrianguloCargado = false;
+        //ataqueCuadrado = false;
+        //ataqueTriangulo = false;
+        //ataqueCuadradoCargado = false;
+        //ataqueTrianguloCargado = false;
 
         if (Box.action != null)
         {
@@ -151,15 +156,22 @@ public class ControllerManager : MonoBehaviour
                 cuadradoHold = true;
             }
 
-            if (Box.action.WasReleasedThisFrame() && (Time.time - delayCuadrado) <= 0.5f)
+            if (Box.action.WasReleasedThisFrame() && (Time.time - delayCuadrado) <= 0.25f)
             {
                 ataqueCuadrado = true;
+
+                ataqueTriangulo = false;
+                ataqueCuadradoCargado = false;
+                ataqueTrianguloCargado = false;
             }
-            if (Box.action.IsPressed() && (Time.time - delayCuadrado) > 0.5f && cuadradoHold)
+            if (Box.action.IsPressed() && (Time.time - delayCuadrado) > 0.25f && cuadradoHold)
             {
                 ataqueCuadradoCargado = true;
                 cuadradoHold = false;
 
+                ataqueCuadrado = false;
+                ataqueTriangulo = false;
+                ataqueTrianguloCargado = false;
             }
         }
         if (Triangle.action != null)
@@ -170,17 +182,23 @@ public class ControllerManager : MonoBehaviour
                 trianguloHold = true;
 
             }
-            if (Triangle.action.WasReleasedThisFrame() && (Time.time - delayTriangulo) <= 0.5f)
+            if (Triangle.action.WasReleasedThisFrame() && (Time.time - delayTriangulo) <= 0.25f)
             {
                 ataqueTriangulo = true;
 
+                ataqueCuadrado = false;
+                ataqueCuadradoCargado = false;
+                ataqueTrianguloCargado = false;
             }
 
-            if (Triangle.action.IsPressed() && (Time.time - delayTriangulo) > 0.5f && trianguloHold)
+            if (Triangle.action.IsPressed() && (Time.time - delayTriangulo) > 0.25f && trianguloHold)
             {
                 ataqueTrianguloCargado = true;
                 trianguloHold = false;
 
+                ataqueCuadrado = false;
+                ataqueTriangulo = false;
+                ataqueCuadradoCargado = false;
             }
         }
 
@@ -189,6 +207,7 @@ public class ControllerManager : MonoBehaviour
 
 
     }
+    
     // Update is called once per frame
     void Update()
     {
