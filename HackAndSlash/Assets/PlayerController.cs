@@ -329,6 +329,7 @@ public class PlayerController : MonoBehaviour
             currentComboAttacks.attacks[golpe].collider.GetComponent<AttackCollider>().SetFeedback(currentComboAttacks.attacks[golpe].enemyFeedback);
             currentComboAttacks.attacks[golpe].collider.tag = currentComboAttacks.attacks[golpe].colliderTag;
             currentComboAttacks.attacks[golpe].collider.SetActive(true);
+
             StartCoroutine(DesactivarCollisionGolpe(0.05f, golpe));
         }   
 
@@ -346,6 +347,8 @@ public class PlayerController : MonoBehaviour
 
         playerAnim.speed = 1.5f;
         currentComboAttack++;
+        Debug.Log("Attack");
+
         if (currentComboAttacks.attacks[currentComboAttack].collider != null && currentComboAttacks.combo != ComboAtaques.air2)
         {
 

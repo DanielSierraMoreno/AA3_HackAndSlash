@@ -596,5 +596,9 @@ public class Enemy1 : MonoBehaviour
                 }
             }
         }
+        if(other.GetComponent<BlessingFactory>() != null)
+        {
+
+        }
     }
 }

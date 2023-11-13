@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using MoreMountains.Feedbacks;
 using UnityEngine.VFX;
+using System.Linq;
 
 public class PlayerControl : MonoBehaviour
 {
@@ -79,6 +80,10 @@ public class PlayerControl : MonoBehaviour
         public int repeticionGolpes;
         public float delayRepeticionGolpes;
 
+        //1 is light, 2 is heavy
+        public GameObject BlessingToSpawnHeavy;
+        //public GameObject BlessingToSpawnHeavy;
+        //public GameObject BlessingToSpawnHeavy;
     }
     [System.Serializable]
     public class ListaAtaques
@@ -349,11 +354,31 @@ public class PlayerControl : MonoBehaviour
         currentComboAttacks.attacks[golpe].collider.SetActive(false);
 
     }
+
+    public void SpawnObjectWithDelay(float delay)
+    {
+        Invoke("SpawnObject", delay); // Invoke the method after the specified delay
+    }
+    private void SpawnObject()
+    {
+        Instantiate(currentComboAttacks.attacks[currentComboAttack].BlessingToSpawnHeavy, transform.GetChild(0).position + new Vector3(0f, 0f, 5f), Quaternion.identity);
+    }
     void PlayAttack()
     {
 
         playerAnim.speed = 1.5f;
         currentComboAttack++;
+
+        //if ((currentComboAttack == currentComboAttacks.attacks.Count() - 1) /*&& 
+        //    currentComboAttacks.attacks[currentComboAttack].effectToSpawn != null*/)
+        //    BlessingFactory.Instance.SpawnHeavyAttackBlessing(this.transform.position,Quaternion.identity);
+        //{
+        //    DynamicCameraControl.Instance.ChangeTopRigHeightAndReset(-1.73f, 1f, 0.5f);
+        //}
+        if(currentComboAttacks.attacks[currentComboAttack].BlessingToSpawnHeavy != null)
+        {
+            SpawnObjectWithDelay(0.5f);
+        }
         if (currentComboAttacks.attacks[currentComboAttack].collider != null && currentComboAttacks.combo != ComboAtaques.air2)
         {
 
@@ -758,12 +783,12 @@ public class PlayerControl : MonoBehaviour
                 {
                     case Moves.WALK:
                         Move(walkSpeed);
-                        Debug.Log("Walking");
+                        //Debug.Log("Walking");
                         //walkVFX.Play();
                         break;
                     case Moves.RUN:
                         Move(runSpeed);
-                        Debug.Log("Running");
+                        //Debug.Log("Running");
                         break;
                     default:
                         Move(0);
