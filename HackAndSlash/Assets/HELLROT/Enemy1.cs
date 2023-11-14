@@ -489,7 +489,8 @@ public class Enemy1 : MonoBehaviour
                 SpawnWhiteSplash(collisionPoint);
                 SpawnBloodSplash(collisionPoint);
                 SpawnHitLine(collisionPoint);
-                ComboManager.instance.IncreaseCombo();
+                //ComboManager.instance.IncreaseCombo();
+                AbilityPowerManager.instance.IncreaseCombo(); 
 
                 fallStartTime = Time.time;
                 state = States.HIT;
@@ -509,7 +510,8 @@ public class Enemy1 : MonoBehaviour
                     SpawnWhiteSplash(collisionPoint);
                     SpawnBloodSplash(collisionPoint);
                     SpawnHitLine(collisionPoint);
-                    ComboManager.instance.IncreaseCombo();
+                    //ComboManager.instance.IncreaseCombo();
+                    AbilityPowerManager.instance.IncreaseCombo();
 
 
                     rigidbody.AddForce(this.transform.up * JumpForce, ForceMode.Impulse);
@@ -533,7 +535,8 @@ public class Enemy1 : MonoBehaviour
                     SpawnWhiteSplash(collisionPoint);
                     SpawnBloodSplash(collisionPoint);
                     SpawnHitLine(collisionPoint);
-                    ComboManager.instance.IncreaseCombo();
+                    //ComboManager.instance.IncreaseCombo();
+                    AbilityPowerManager.instance.IncreaseCombo();
 
                     fallStartTime = Time.time;
                     state = States.HIT;
@@ -551,7 +554,8 @@ public class Enemy1 : MonoBehaviour
                     SpawnWhiteSplash(collisionPoint);
                     SpawnBloodSplash(collisionPoint);
                     SpawnHitLine(collisionPoint);
-                    ComboManager.instance.IncreaseCombo();
+                    //ComboManager.instance.IncreaseCombo();
+                    AbilityPowerManager.instance.IncreaseCombo();
                     state = States.HIT;
                     hit = Hits.UP;
                     Invoke("DelayAire", delayJumpHit);
@@ -592,7 +596,8 @@ public class Enemy1 : MonoBehaviour
                     SpawnBloodSplash(collisionPoint);
                     SpawnHitLine(collisionPoint);
                     DamageNumber damageNumber = numberPrefab.Spawn(collisionPoint, Random.Range(1, 100));
-                    ComboManager.instance.IncreaseCombo();
+                    //ComboManager.instance.IncreaseCombo();
+                    AbilityPowerManager.instance.IncreaseCombo();
                 }
             }
         }
